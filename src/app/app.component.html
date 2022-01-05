@@ -1,7 +1,28 @@
-<h1>krondor.</h1> <!-- this could be in some cool font-->
-
-<!--todo I don't know to link things yet but this is links to pages go-->
-
+<p>
+  <mat-toolbar>
+    <!--todo: Resize this button th-->
+    <app-menu></app-menu>
+    <a routerLink="/"
+       routerLinkActive="active"
+       style="text-decoration: none;color: black"
+    >
+      <span>  krondor.</span>
+    </a>
+    <span class="spacer"></span>
+    <button mat-icon-button
+            class='about-icon'
+            aria-label="About this site"
+            (click)="buttonNavigate('/about')"
+      >
+      <mat-icon>contact_support</mat-icon>
+    </button>
+    <button mat-button
+            class="share-icon"
+            aria-label="Share this site!">
+      <mat-icon>share</mat-icon>
+    </button>
+  </mat-toolbar>
+</p>
 
 <!-- The routed views render in the <router-outlet>-->
 <router-outlet></router-outlet>
