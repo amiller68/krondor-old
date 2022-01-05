@@ -14,4 +14,4 @@ app.get("/", (req, res) => {
 });
 
 // Listen on all interfaces
-app.listen(8080, '0.0.0.0', () => console.log("Server listening 8080", "!"));
+app.listen(process.env.PORT || 3000, () => console.log("Server listening", process.env.PORT || 3000,"!"));
