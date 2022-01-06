@@ -6,23 +6,28 @@ import { AppComponent } from './app.component';
 
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon'
-import { MenuModule } from './entities/menu/menu.module'
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
+import { MenuModule } from './entities/menu/menu.module';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FrontPageComponent } from './pages/front-page/front-page.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    FrontPageComponent
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     AppRoutingModule,
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
-    MenuModule,
-    BrowserAnimationsModule
+    MatProgressSpinnerModule,
+    MenuModule
   ],
   providers: [],
   bootstrap: [AppComponent]

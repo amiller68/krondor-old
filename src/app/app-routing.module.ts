@@ -14,7 +14,7 @@ const routes: Routes = [
   { path: 'projects', component: ProjectsPageComponent },
   { path: 'writing', component: WritingPageComponent },
   // Wild card route
-  { path: '*', component: ErrorPageComponent }
+  { path: '**', component: ErrorPageComponent }
 ];
 
 @NgModule({
