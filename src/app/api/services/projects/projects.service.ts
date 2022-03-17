@@ -5,7 +5,7 @@ import {catchError, map, Observable, of, tap} from "rxjs";
 import * as moment from "moment";
 import * as _ from "underscore";
 
-const hostname: string = 'krondor';
+const deployedHostname: string = 'www.krondor.org';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +27,7 @@ export class ProjectsService {
   constructor(private http: HttpClient) {}
 
   getProjects(): Observable<Project[]> {
-    let projectsUrl = window.location.hostname === 'krondor' ?
+    let projectsUrl = window.location.hostname === deployedHostname ?
       this.deployedProjectsUrl : this.developmentProjectsUrl;
     return this.http.get<Project[]>(projectsUrl, this.httpOptions)
       .pipe(
