@@ -19,10 +19,12 @@ export class ProjectsPageComponent implements OnInit {
     console.log("Fetching projects:")
     this.projectService.getProjects()
       .subscribe((data) => {
-          this.projects = data
-          console.log(data);
+        // Error Check
+        if (data.length > 0) {
+            this.projects = data
+            console.log(data);
         }
-      )
+      })
   }
 
 }

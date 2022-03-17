@@ -5,11 +5,16 @@ import {catchError, map, Observable, of, tap} from "rxjs";
 import * as moment from "moment";
 import * as _ from "underscore";
 
+const hostname: string = 'krondor';
+
 @Injectable({
   providedIn: 'root'
 })
 export class ProjectsService {
-  private projectsUrl = 'http://localhost:3000/api/projects';  // URL to web api
+  //@todo: Upgrade to HTTPS
+  private deployedProjectsUrl = 'http://www.krondor.org/api/projects';  // URL to deployed web api
+  private developmentProjectsUrl = 'http://localhost:3000/api/projects';  // URL to development web api
+
 
   httpOptions = {
     headers: new HttpHeaders({
@@ -22,13 +27,15 @@ export class ProjectsService {
   constructor(private http: HttpClient) {}
 
   getProjects(): Observable<Project[]> {
-    return this.http.get<Project[]>(this.projectsUrl, this.httpOptions)
+    let projectsUrl = window.location.hostname === 'krondor' ?
+      this.deployedProjectsUrl : this.developmentProjectsUrl;
+    return this.http.get<Project[]>(projectsUrl, this.httpOptions)
       .pipe(
         tap(_ => console.log("Fetched experiments!")),
         map((resp: Project[]) =>
           this.extractProjects(resp)
         ),
-        catchError(this.handleError<Project[]>('getHeroes', [])));
+        catchError(this.handleError<Project[]>('getProjects', [])));
     //return of(this.extractProjects(experimentsObj))
   }
 
