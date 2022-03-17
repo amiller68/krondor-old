@@ -1,6 +1,7 @@
 const express = require("express");
 const fs = require('fs');
 const https = require('https');
+const data = require('./db.json');
 const app = express();
 
 // Get our server's path
@@ -9,7 +10,13 @@ const dir = path.join(__dirname, 'dist/krondor/');
 
 app.use(express.static(dir));
 
-app.get("/", (req, res) => {
+app.get('/api/projects',(req, res) => {
+  console.log("Projects requested.")
+  res.json(data.projects);
+});
+
+//Angular handles the routing
+app.get("/*", (req, res) => {
   res.sendFile('index.html', {root: 'dist/krondor/'})
 });
 

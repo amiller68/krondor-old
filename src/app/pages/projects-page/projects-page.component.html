@@ -1,1 +1,8 @@
 <p>Take a look at my <a href="https://github.com/amiller68/">my GitHub</a></p>
+<div *ngIf="projects === undefined">
+  <p>No Projects</p>
+</div>
+<div *ngIf="projects">
+  <p>Projects</p>
+  {{projects[0].title}}
+</div>

@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { ProjectsService } from "../../api/services/projects/projects.service";
+import {Project} from "../../entities/projects";
 
 @Component({
   selector: 'app-projects-page',
@@ -6,10 +8,21 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./projects-page.component.sass']
 })
 export class ProjectsPageComponent implements OnInit {
-
-  constructor() { }
+  projects?: Project[] = undefined;
+  constructor(private projectService: ProjectsService ) { }
 
   ngOnInit(): void {
+    this.getProjects()
+  }
+
+  getProjects(): void {
+    console.log("Fetching projects:")
+    this.projectService.getProjects()
+      .subscribe((data) => {
+          this.projects = data
+          console.log(data);
+        }
+      )
   }
 
 }

@@ -1,0 +1,11 @@
+{
+  "projects" : {
+    "defaultID": {
+      "startDate": "06132022",
+      "endDate": "",
+      "title": "Default Project",
+      "platform": "",
+      "tags":  ["default"]
+    }
+  }
+}

@@ -1,4 +1,4 @@
-export type projectDescription = {
+export type Project = {
   startDate: Date,
   endDate: Date | undefined,
   title: string,
@@ -7,7 +7,7 @@ export type projectDescription = {
   tags: string []
 };
 
-export const defaultDescription = {
+export const defaultProject = {
   startDate: new Date(),
   endDate: undefined,
   title: 'project_title',
