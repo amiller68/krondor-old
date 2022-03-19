@@ -9,8 +9,7 @@ import { Router } from '@angular/router';
 export class AppComponent {
   constructor(private router: Router) {}
 
-  buttonNavigate = function (route: string) {
-    // @ts-ignore
+  buttonNavigate(route: string) {
     this.router.navigateByUrl(route);
   };
 
