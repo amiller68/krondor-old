@@ -24,6 +24,9 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatSelectModule } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
+//Markdown Module
+import { LMarkdownEditorModule } from 'ngx-markdown-editor';
+
 //App Components
 import { FrontPageComponent } from './pages/front-page/front-page.component';
 import { AddProjectDialogComponent, ProjectsPageComponent } from "./pages/projects-page/projects-page.component";
@@ -58,7 +61,8 @@ import {AboutPageComponent} from "./pages/about-page/about-page.component";
     MatSelectModule,
     FormsModule,
     ReactiveFormsModule,
-    MatTooltipModule
+    MatTooltipModule,
+    LMarkdownEditorModule
   ],
   providers: [],
   bootstrap: [AppComponent]
