@@ -29,9 +29,10 @@ import { LMarkdownEditorModule } from 'ngx-markdown-editor';
 
 //App Components
 import { FrontPageComponent } from './pages/front-page/front-page.component';
-import { AddProjectDialogComponent, ProjectsPageComponent } from "./pages/projects-page/projects-page.component";
+import { ProjectsPageComponent } from "./pages/projects-page/projects-page.component";
 import { PhotosPageComponent } from './pages/photos-page/photos-page.component';
 import {AboutPageComponent} from "./pages/about-page/about-page.component";
+import { ProjectEditorComponent } from './pages/project-editor/project-editor.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,7 @@ import {AboutPageComponent} from "./pages/about-page/about-page.component";
     ProjectsPageComponent,
     PhotosPageComponent,
     AboutPageComponent,
-    AddProjectDialogComponent
+    ProjectEditorComponent
   ],
   imports: [
     BrowserModule,
@@ -67,4 +68,5 @@ import {AboutPageComponent} from "./pages/about-page/about-page.component";
   providers: [],
   bootstrap: [AppComponent]
 })
+
 export class AppModule { }

@@ -5,18 +5,18 @@
   <input type="text" placeholder="Project Title" [(ngModel)]="title" required>
   <br>
   <md-editor name="Content"
-    #md="ngModel"
-    [upload]="doUpload"
-    [preRender]="preRender"
-    [postRender]="postRender"
-    [(ngModel)]="content"
-    [height]="'400px'"
-    [mode]="mode"
-    [options]="options"
-    (onEditorLoaded)="onEditorLoaded($event)"
-    (onPreviewDomChanged)="onPreviewDomChanged($event)"
-    required
-    maxlength="600">
+             #md="ngModel"
+             [upload]="doUpload"
+             [preRender]="preRender"
+             [postRender]="postRender"
+             [(ngModel)]="content"
+             [height]="'400px'"
+             [mode]="mode"
+             [options]="options"
+             (onEditorLoaded)="onEditorLoaded($event)"
+             (onPreviewDomChanged)="onPreviewDomChanged($event)"
+             required
+             maxlength="600">
   </md-editor>
   <div class="well well-sm">
     <button class="dialog-button" (click)="togglePreviewPanel()">

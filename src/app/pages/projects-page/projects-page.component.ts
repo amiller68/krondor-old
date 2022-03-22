@@ -5,7 +5,8 @@ import { Project, Tag } from "../../entities/projects";
 import {FormControl, Validators} from '@angular/forms';
 import * as _ from 'underscore';
 import {TooltipPosition} from "@angular/material/tooltip";
-import {  MdEditorOption, UploadResult } from "ngx-markdown-editor";
+import { ProjectEditorComponent } from "../project-editor/project-editor.component";
+
 export interface ProjectPanel {
   project: Project,
   opened: boolean
@@ -60,7 +61,7 @@ export class ProjectsPageComponent implements OnInit {
 
   //Opens the dialog panel for creating a new project
   addProject() {
-    const dialogRef = this.dialog.open(AddProjectDialogComponent);
+    const dialogRef = this.dialog.open(ProjectEditorComponent);
 
     dialogRef.afterClosed().subscribe(result => {
       console.log(`Dialog result: ${result}`);
@@ -97,85 +98,5 @@ export class ProjectsPageComponent implements OnInit {
     }
     console.log("[ERROR] No tags to get names from!");
     return "No Name"
-  }
-}
-
-@Component({
-  selector: 'add-project-dialog',
-  templateUrl: 'add-project-dialog.html',
-})
-
-export class AddProjectDialogComponent {
-
-  title: string = '';
-  public content: string = '';
-  public mode: string = "editor";
-
-  //Source: https://stackblitz.com/edit/ngx-markdown-editor?file=src%2Fapp%2Fapp.component.ts
-  public options: MdEditorOption = {
-    showPreviewPanel: false,
-    enablePreviewContentClick: false,
-    resizable: true,
-  };
-
-  constructor() {
-    this.doUpload = this.doUpload.bind(this);
-    this.preRender = this.preRender.bind(this);
-    this.postRender = this.postRender.bind(this);
-  }
-
-  doUpload(files: Array<File>): Promise<Array<UploadResult>> {
-    // do upload file by yourself
-    return Promise.resolve([{ name: 'xxx', url: 'xxx.png', isImg: true }]);
-  }
-
-  ngOnInit(): void {
-    let contentArr = ["# New Project"];
-    contentArr.push("Use this editor to type up what you're thinking about");
-    this.content = contentArr.join("\r\n");
-  }
-
-  togglePreviewPanel() {
-    this.options.showPreviewPanel = !this.options.showPreviewPanel;
-    this.options = Object.assign({}, this.options);
-  }
-
-  changeMode() {
-    if (this.mode === "editor") {
-      this.mode = "preview";
-    } else {
-      this.mode = "editor";
-    }
-  }
-
-  togglePreviewClick() {
-    this.options.enablePreviewContentClick = !this.options
-      .enablePreviewContentClick;
-    this.options = Object.assign({}, this.options);
-  }
-
-  toggleResizeAble() {
-    this.options.resizable = !this.options.resizable;
-    this.options = Object.assign({}, this.options);
-  }
-
-  //editor: AceEditor
-  onEditorLoaded(editor: any) {
-    console.log("Editor loaded: ", editor);
-  }
-
-  preRender(content: any) {
-    console.log("Pre-render called");
-    return content;
-  }
-
-  postRender(htmlContent: any) {
-    console.log("Post-render called");
-    return htmlContent;
-  }
-
- onPreviewDomChanged(dom: HTMLElement) {
-    console.log(dom);
-    console.log(dom.innerHTML);
   }
 }
