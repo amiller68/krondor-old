@@ -1,11 +1,32 @@
 {
   "projects" : {
-    "defaultID": {
+    "0": {
       "startDate": "06132022",
       "endDate": "",
-      "title": "Default Project",
+      "title": "Default Project 1",
       "platform": "",
-      "tags":  ["default"]
+      "tags":  ["test1"]
+    },
+    "1": {
+      "startDate": "06142022",
+      "endDate": "",
+      "title": "Default Project 2",
+      "platform": "",
+      "tags":  ["test2", "test3"]
+    }
+  },
+  "tags": {
+    "test1": {
+      "name": "Test 1",
+      "color": "255,0,0"
+    },
+    "test2": {
+      "name": "Test 2",
+      "color": "0,255,0"
+    },
+    "test3": {
+      "name": "Test 3",
+      "color": "0,0,255"
     }
   }
 }

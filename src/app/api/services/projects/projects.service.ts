@@ -1,11 +1,17 @@
 import { Injectable } from '@angular/core';
-import { Project, defaultProject } from '../../../entities/projects';
+import {Project, Tag, defaultProject, defaultTag} from '../../../entities/projects';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {catchError, map, Observable, of, tap} from "rxjs";
 import * as moment from "moment";
 import * as _ from "underscore";
 
 const deployedHostname: string = 'www.krondor.org';
+
+//@todo: type this more strongly
+export type dbResponse = {
+  projects: any,
+  tags: any
+}
 
 @Injectable({
   providedIn: 'root'
@@ -26,33 +32,38 @@ export class ProjectsService {
 
   constructor(private http: HttpClient) {}
 
-  getProjects(): Observable<Project[]> {
+  getProjectsAndTags(): Observable<[Project[], Tag[]]> {
     let projectsUrl = window.location.hostname === deployedHostname ?
       this.deployedProjectsUrl : this.developmentProjectsUrl;
     return this.http.get<Project[]>(projectsUrl, this.httpOptions)
       .pipe(
-        tap(_ => console.log("Fetched experiments!")),
-        map((resp: Project[]) =>
-          this.extractProjects(resp)
+        tap(_ => console.log("Fetched projects!")),
+        map((resp): [Project[], Tag[]] =>
+          //@ts-ignore
+          this.extractProjectsAndTags(resp)
         ),
-        catchError(this.handleError<Project[]>('getProjects', [])));
-    //return of(this.extractProjects(experimentsObj))
+        catchError(
+          this.handleError<[Project[], Tag[]]>(
+            'getProjectsAndTags',
+            [[defaultProject],[defaultTag]]
+          )
+        )
+      );
   }
 
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
-      console.log("Error occurred fetching experiments: ", error)
+      console.log("Error occurred during", operation,": ", error)
       return of(result as T);
     };
   }
 
-  extractProjects(obj: Object): Project[] {
-    return _.map(obj, function (data: any, key: string) {
-      let id = key;
+  extractProjectsAndTags(resp: dbResponse): [Project[], Tag[]] {
+    let projects = _.map(resp.projects,(data: any, key: string) => {
       let start_date = moment(data.startDate, "MMDDYYYY").toDate();
       let end_date = data.endDate === '' ? undefined : moment(data.endDate, "MMDDYYYY").toDate()
       return {
-        id: id,
+        id: key,
         startDate: start_date,
         endDate: end_date,
         title: data.title,
@@ -61,5 +72,21 @@ export class ProjectsService {
         tags: data.tags
       }
     })
+    let tags = _.map(resp.tags, (data: any, key: string) => {
+      // let rbg_tokens = data.color.split(',');
+      // let rbg_vals: [number, number, number] = [0, 0, 0]
+      //
+      // //Ugly but type safe!
+      // rbg_vals[0] = parseInt(rbg_tokens[0]);
+      // rbg_vals[1] = parseInt(rbg_tokens[1]);
+      // rbg_vals[2] = parseInt(rbg_tokens[1]);
+
+      return {
+        id: key,
+        name: data.name,
+        color: data.color
+      }
+    })
+    return [projects, tags]
   }
 }

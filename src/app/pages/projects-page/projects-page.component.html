@@ -1,39 +1,46 @@
-<p>This page is under construction! I'm having some trouble getting everything to render correctly :(</p>
-<!--<mat-toolbar class="toolbar">-->
-<!--  <span>projects.</span>-->
-<!--  <span class="spacer"></span>-->
-<!--  <button mat-button class='toolbar-button'-->
-<!--          aria-label="Add proejct"-->
-<!--          (click)="addProject()">-->
-<!--    <mat-icon>add</mat-icon>-->
-<!--  </button>-->
-<!--</mat-toolbar>-->
+<mat-toolbar class="toolbar">
+  <span>projects.</span>
+    <mat-form-field appearance="fill">
+      <mat-label>Tags</mat-label>
+      <mat-select [formControl]="selectedTags" multiple>
+        <mat-option class="tag-selector" *ngFor="let t of tags" [value]="t.id">
+          {{t.name}}
+          <mat-icon [ngStyle]="{'color': getTagColor(t.id)}">
+            circle
+          </mat-icon>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  <span class="spacer"></span>
+  <button mat-button class='toolbar-button'
+          aria-label="Add proejct"
+          (click)="addProject()">
+    <mat-icon>add</mat-icon>
+  </button>
+</mat-toolbar>
 
-<!--<mat-sidenav-container [hasBackdrop]="false" autosize>-->
-<!--  <mat-sidenav opened="true" class="search-nav">-->
-<!--    Project Search bar-->
-<!--  </mat-sidenav>-->
-<!--  <mat-sidenav-content>-->
-<!--    <section>-->
-<!--      <mat-card>-->
-<!--        test-->
-<!--      </mat-card>-->
-<!--      <mat-accordion>-->
-<!--        <mat-expansion-panel *ngFor="let p of projectPanels"-->
-<!--                             hideToggle-->
-<!--                             (opened)="p.opened = true"-->
-<!--                             (closed)="p.opened = false">-->
-<!--          <mat-expansion-panel-header>-->
-<!--            <mat-panel-title>-->
-<!--              {{p.project.title}}-->
-<!--            </mat-panel-title>-->
-<!--            <mat-panel-description>-->
-<!--              {{p.project.description}}-->
-<!--            </mat-panel-description>-->
-<!--          </mat-expansion-panel-header>-->
-<!--          <p>This is the preview page of the project...</p>-->
-<!--        </mat-expansion-panel>-->
-<!--      </mat-accordion>-->
-<!--    </section>-->
-<!--  </mat-sidenav-content>-->
-<!--</mat-sidenav-container>-->
+<mat-accordion>
+  <mat-expansion-panel *ngFor="let p of projectPanels"
+                       hideToggle
+                       (opened)="p.opened = true"
+                       (closed)="p.opened = false">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <span>{{p.project.title}}</span>
+        <span class="spacer"></span>
+        <div class="project-tag-icons">
+          <mat-icon *ngFor="let t of p.project.tags"
+            [ngStyle]="{'color': getTagColor(t)}"
+            matTooltip="getTagName(t)"
+            [matTooltipPosition]="tagToolTipPosition">
+            circle
+          </mat-icon>
+        </div>
+      </mat-panel-title>
+      <mat-panel-description>
+        {{p.project.description}}
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <p>This is the preview page of the project...</p>
+  </mat-expansion-panel>
+</mat-accordion>

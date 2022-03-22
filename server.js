@@ -1,6 +1,4 @@
 const express = require("express");
-const fs = require('fs');
-const https = require('https');
 const data = require('./db.json');
 const app = express();
 
@@ -12,7 +10,11 @@ app.use(express.static(dir));
 
 app.get('/api/projects',(req, res) => {
   console.log("Projects requested.")
-  res.json(data.projects);
+  res.json(
+    {
+      "projects": data.projects,
+      "tags": data.tags
+    });
 });
 
 //Angular handles the routing
