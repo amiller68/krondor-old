@@ -1,32 +1,36 @@
 {
-  "projects" : {
-    "0": {
-      "startDate": "06132022",
-      "endDate": "",
-      "title": "Default Project 1",
+  "projects": {
+    "fcbcb991-aade-4432-b9d6-f80f581a9a02": {
+      "startDate": "2022-03-23T05:00:00.000Z",
+      "title": "krondor.org",
+      "description": "# Welcome to Krondor.org!\n",
       "platform": "",
-      "tags":  ["test1"]
-    },
-    "1": {
-      "startDate": "06142022",
-      "endDate": "",
-      "title": "Default Project 2",
-      "platform": "",
-      "tags":  ["test2", "test3"]
+      "tags": [
+        "personal",
+        "coding"
+      ]
     }
   },
   "tags": {
-    "test1": {
-      "name": "Test 1",
+    "personal": {
+      "name": "Personal",
       "color": "255,0,0"
     },
-    "test2": {
-      "name": "Test 2",
+    "academic": {
+      "name": "Academic",
+      "color": "255,255,0"
+    },
+    "coding": {
+      "name": "Code",
       "color": "0,255,0"
     },
-    "test3": {
-      "name": "Test 3",
+    "writing": {
+      "name": "Writing",
       "color": "0,0,255"
+    },
+    "fiction": {
+      "name": "Fiction",
+      "color": "0,255,255"
     }
   }
 }

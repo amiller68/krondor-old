@@ -1,20 +1,101 @@
 const express = require("express");
 const data = require('./db.json');
+const fs = require('fs');
+const bodyParser = require('body-parser')
+
 const app = express();
 
 // Get our server's path
 const path = require('path');
 const dir = path.join(__dirname, 'dist/krondor/');
+const dbFile = 'db.json';
 
 app.use(express.static(dir));
 
 app.get('/api/projects',(req, res) => {
   console.log("Projects requested.")
-  res.json(
-    {
-      "projects": data.projects,
-      "tags": data.tags
+  fs.readFile(dbFile, 'utf-8',(err, data) => {
+    if (err) throw err;
+    let dataObj = JSON.parse(data);
+    res.json(
+      {
+        "projects": dataObj.projects,
+        "tags": dataObj.tags
+      });
+  });
+});
+
+app.post('/api/projects', bodyParser.json(), (req, res) => {
+  let newProject = req.body;
+  console.log("Project Added: ", req.body.id);
+  fs.readFile(dbFile, 'utf-8',(err, data) => {
+    if (err) throw err;
+    let dataObj = JSON.parse(data);
+    dataObj.projects[newProject.id] = {
+      startDate: newProject.startDate,
+      endDate: newProject.endDate,
+      title: newProject.title,
+      description: newProject.description,
+      platform: newProject.platform,
+      tags: newProject.tags
+    }
+    // console.log("Updated data: ", dataObj);
+    let updatedDataStr = JSON.stringify(dataObj, null, 2);
+
+    fs.writeFile(dbFile, updatedDataStr, (err) => {
+      if (err) throw err;
+      res.json(
+        {
+          data: newProject
+        });
     });
+  });
+});
+
+app.delete('/api/projects/:id', (req, res) => {
+  let id = req.params.id;
+  console.log("Project deletion requested: ", id);
+  fs.readFile(dbFile, 'utf-8',(err, data) => {
+    if (err) throw err;
+    let dataObj = JSON.parse(data);
+    delete dataObj.projects[id];
+
+    //console.log("Updated data: ", dataObj);
+    let updatedDataStr = JSON.stringify(dataObj, null, 2);
+
+    fs.writeFile(dbFile, updatedDataStr, (err) => {
+      if (err) throw err;
+      res.send();
+    });
+  });
+});
+
+app.put('/api/projects', bodyParser.json(), (req, res) => {
+  let updatedProject = req.body;
+  console.log("Project updated: ", req.body.id);
+  fs.readFile(dbFile, 'utf-8',(err, data) => {
+    if (err) throw err;
+    let dataObj = JSON.parse(data);
+    dataObj.projects[updatedProject.id] = {
+      startDate: updatedProject.startDate,
+      endDate: updatedProject.endDate,
+      title: updatedProject.title,
+      description: updatedProject.description,
+      platform: updatedProject.platform,
+      tags: updatedProject.tags
+    }
+
+    // console.log("Updated data: ", dataObj);
+    let updatedDataStr = JSON.stringify(dataObj, null, 2);
+
+    fs.writeFile(dbFile, updatedDataStr, (err) => {
+      if (err) throw err;
+       res.json(
+        {
+          data: updatedProject
+        });
+    });
+  });
 });
 
 //Angular handles the routing

@@ -1,4 +1,7 @@
+import * as moment from 'moment';
+
 export type Project = {
+  id: string,
   startDate: Date,
   endDate: Date | undefined,
   title: string,
@@ -14,10 +17,11 @@ export type Tag = {
 }
 
 export const defaultProject: Project = {
+  id: '',
   startDate: new Date(),
   endDate: undefined,
-  title: 'project_title',
-  description: 'What\'s your project?',
+  title: 'Project Title',
+  description: '# What\'s your project?',
   platform: '',
   tags:  []
 }

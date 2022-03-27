@@ -1,5 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, Optional } from '@angular/core';
 import { MdEditorOption, UploadResult } from "ngx-markdown-editor";
+import { MatDialogRef, MAT_DIALOG_DATA  } from "@angular/material/dialog";
+import {defaultProject, Project, Tag} from "../../entities/projects";
+import {ProjectDialogData} from "../projects-page/projects-page.component";
+import * as _ from "underscore";
 
 @Component({
   selector: 'app-project-editor',
@@ -8,32 +12,74 @@ import { MdEditorOption, UploadResult } from "ngx-markdown-editor";
 })
 
 export class ProjectEditorComponent implements OnInit {
+  //Dialog state
+  //Action coordinates what we're doing to the project being edited
+  action: string = '';
+  localProject: Project = defaultProject;
+  localTags: Tag[] = [];
+
+  //Editor variables
   title: string = '';
-  public content: string = '';
-  public mode: string = "editor";
+  content: string = '';
+  mode: string = "editor";
 
   //Source: https://stackblitz.com/edit/ngx-markdown-editor?file=src%2Fapp%2Fapp.component.ts
   public options: MdEditorOption = {
     showPreviewPanel: false,
     enablePreviewContentClick: false,
-    resizable: true,
+    resizable: false,
   };
 
-  constructor() {
+  constructor(
+    public dialogRef: MatDialogRef<ProjectEditorComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: ProjectDialogData) {
+    console.log("Dialog opened with Initializer: ", data);
+    this.localProject = data.project;
+    this.localTags = data.tags
+    this.action = data.action;
+
     this.doUpload = this.doUpload.bind(this);
     this.preRender = this.preRender.bind(this);
     this.postRender = this.postRender.bind(this);
   }
 
-  doUpload(files: Array<File>): Promise<Array<UploadResult>> {
-    // do upload file by yourself
-    return Promise.resolve([{ name: 'xxx', url: 'xxx.png', isImg: true }]);
+  ngOnInit(): void {
   }
 
-  ngOnInit(): void {
-    let contentArr = ["# New Project"];
-    contentArr.push("Use this editor to type up what you're thinking about");
-    this.content = contentArr.join("\r\n");
+  //Dialog action controls
+  doAction(){
+    console.log("Submitted dialog action")
+    this.dialogRef.close({event:this.action,data:this.localProject});
+    this.localProject = defaultProject;
+  }
+
+  closeDialog(){
+    console.log("Closed dialog")
+    this.dialogRef.close({event:'Cancel'});
+    this.localProject = defaultProject;
+  }
+
+  //Project editing and data access methods:
+
+  getTagColor(tagId: string) {
+    //Error Check
+    if (this.localTags !== undefined) {
+      let tags = this.localTags
+      let tag = _.findWhere(tags, {id: tagId});
+      if (tag) {
+        return "rgb(" + tag.color + ")";
+      }
+      console.log("[ERROR] Tag does not exist: id = ", tagId)
+    }
+    console.log("[ERROR] No tags to get colors from!");
+    return "rgb(0, 0, 0)"
+  }
+
+  //MD Editor methods
+
+  //@todo: Implement upload
+  doUpload(files: Array<File>): Promise<Array<UploadResult>> {
+    return Promise.resolve([{ name: 'xxx', url: 'xxx.png', isImg: true }]);
   }
 
   togglePreviewPanel() {
@@ -49,7 +95,6 @@ export class ProjectEditorComponent implements OnInit {
     }
   }
 
-  //editor: AceEditor
   onEditorLoaded(editor: any) {
     console.log("Editor loaded: ", editor);
   }
@@ -69,17 +114,4 @@ export class ProjectEditorComponent implements OnInit {
     console.log(dom);
     console.log(dom.innerHTML);
   }
-
-  //I'm pretty sure I'm gonna want the preview to stay clickable
-  // togglePreviewClick() {
-  //   this.options.enablePreviewContentClick = !this.options
-  //     .enablePreviewContentClick;
-  //   //I think this is for triggering changes
-  //   this.options = Object.assign({}, this.options);
-  // }
-  //I'm pretty sure I'm gonna want everything to be resizable
-  // toggleResizeAble() {
-  //   this.options.resizable = !this.options.resizable;
-  //   this.options = Object.assign({}, this.options);
-  // }
 }

@@ -1,30 +1,55 @@
-<h2>
-  Add a project
-</h2>
-<div class="project-form" style="margin: 20px">
-  <input type="text" placeholder="Project Title" [(ngModel)]="title" required>
-  <br>
-  <md-editor name="Content"
-             #md="ngModel"
-             [upload]="doUpload"
-             [preRender]="preRender"
-             [postRender]="postRender"
-             [(ngModel)]="content"
-             [height]="'400px'"
-             [mode]="mode"
-             [options]="options"
-             (onEditorLoaded)="onEditorLoaded($event)"
-             (onPreviewDomChanged)="onPreviewDomChanged($event)"
-             required
-             maxlength="600">
-  </md-editor>
-  <div class="well well-sm">
-    <button class="dialog-button" (click)="togglePreviewPanel()">
-      {{ options?.showPreviewPanel ? 'Hide' : 'Show' }} Preview Panel
+<div *ngIf="action === 'Delete'; then deleteTemplate else editTemplate"></div>
+<ng-template #deleteTemplate>
+  Are you sure you want to delete {{localProject.title}}?
+  <div class="form-actions">
+    <button class="dialog-button" (click)="doAction()">
+      Yes
     </button>
+    <button class="dialog-button" (click)="closeDialog()">
+      No!
+    </button>
+  </div>
+</ng-template>
+<ng-template #editTemplate>
+  <h2>
+    Add a project
+  </h2>
+  <div class="project-form" style="margin: 20px">
+    <input type="text" placeholder="Project Title" [(ngModel)]="localProject.title" required>
     <br>
-    <button class="dialog-button" (click)="changeMode()">
+    <mat-form-field appearance="fill" *ngIf="localTags">
+      <mat-label>Tags</mat-label>
+      <mat-select [(ngModel)]="localProject.tags" multiple>
+        <mat-option class="tag-selector" *ngFor="let t of localTags" [value]="t.id">
+          {{t.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <md-editor name="Content"
+               #md="ngModel"
+               [upload]="doUpload"
+               [preRender]="preRender"
+               [postRender]="postRender"
+               [(ngModel)]="localProject.description"
+               [height]="'400px'"
+               [mode]="mode"
+               [options]="options"
+               (onEditorLoaded)="onEditorLoaded($event)"
+               (onPreviewDomChanged)="onPreviewDomChanged($event)"
+               required
+               maxlength="1800">
+    </md-editor>
+    <button class="editor-button" (click)="changeMode()">
       {{ mode === 'editor' ? 'Preview' : 'Edit'}}
     </button>
   </div>
-</div>
+
+  <div class="form-actions">
+    <button class="dialog-button" (click)="doAction()">
+      {{action === 'Add'? 'Add' : 'Update'}} Project
+    </button>
+    <button class="dialog-button" (click)="closeDialog()">
+      Cancel
+    </button>
+  </div>
+</ng-template>

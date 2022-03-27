@@ -1,26 +1,69 @@
 .spacer
   flex: 1 1 auto
 
-.toolbar
-  font: 30px font-stack
-  background: black
-  color: white
-  .toolbar-button
-    size: auto
+body
+  margin: 0
+  padding: 0
+  background: #c0c0c0
 
-mat-sidenav-container
-  flex: 1 1 auto
-  overflow: auto
-  height: 100%
-  flex-grow: 1
-  mat-sidenav
-    display: flex
-  mat-sidenav-content
-    background: dimgray
-    mat-expansion-panel
-      background: black
-      color: white
-      //.mat-expanded
-      //  background: white
-      //  color: black
+main
+  float: left
+  padding: 8px
+  width: 80%
+  .project-tag-icons
+    justify-content: end
+    flex-grow: 0
+  .change-content-buttons
+    justify-content: end
 
+aside
+  width: 20%
+  float: left
+  top: 0
+  bottom: 0
+  padding: 8px
+  align-items: stretch
+  display: flex
+
+  .tree-view
+    width: 100%
+    overflow-y: scroll
+
+h1
+  margin: 12px 0
+
+hr
+  margin: 0
+  border: none
+  width: auto
+  height: 1px
+  opacity: 0.5
+  background: linear-gradient(to right, red 20%, yellow 20%, yellow 36%, green 36%, green 60%, blue 60%, blue 100%)
+
+p
+  max-width: 50rem
+  line-height: 1.5
+
+button
+  &.focused
+    outline: 1px dotted #000000
+    outline-offset: -4px
+
+  &.active
+    box-shadow: inset -1px -1px #ffffff, inset 1px 1px #0a0a0a, inset -2px -2px #dfdfdf, inset 2px 2px #808080
+
+@media (max-width: 480px)
+  aside
+    display: none
+
+  main
+    box-sizing: border-box
+    width: 100%
+    margin: 0
+    padding: 16px
+
+  hr, p
+    width: 100%
+
+  h3, h4
+    flex: 0

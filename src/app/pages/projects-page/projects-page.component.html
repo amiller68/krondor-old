@@ -1,46 +1,77 @@
-<mat-toolbar class="toolbar">
-  <span>projects.</span>
-    <mat-form-field appearance="fill">
-      <mat-label>Tags</mat-label>
-      <mat-select [formControl]="selectedTags" multiple>
-        <mat-option class="tag-selector" *ngFor="let t of tags" [value]="t.id">
-          {{t.name}}
-          <mat-icon [ngStyle]="{'color': getTagColor(t.id)}">
-            circle
-          </mat-icon>
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-  <span class="spacer"></span>
-  <button mat-button class='toolbar-button'
-          aria-label="Add proejct"
-          (click)="addProject()">
-    <mat-icon>add</mat-icon>
-  </button>
-</mat-toolbar>
-
-<mat-accordion>
-  <mat-expansion-panel *ngFor="let p of projectPanels"
-                       hideToggle
-                       (opened)="p.opened = true"
-                       (closed)="p.opened = false">
-    <mat-expansion-panel-header>
-      <mat-panel-title>
-        <span>{{p.project.title}}</span>
-        <span class="spacer"></span>
-        <div class="project-tag-icons">
-          <mat-icon *ngFor="let t of p.project.tags"
-            [ngStyle]="{'color': getTagColor(t)}"
-            matTooltip="getTagName(t)"
-            [matTooltipPosition]="tagToolTipPosition">
-            circle
-          </mat-icon>
+<body>
+<!--Our sidenav component-->
+  <aside>
+    <ul class="tree-view">
+      <li>Show:
+          <ul>
+            <li *ngFor="let t of tagOptions">
+              <input
+                type="checkbox"
+                id="{{t.tag.id}}"
+                [(ngModel)]="t.selected"
+                (change)="projectFilter()">
+              <label for="{{t.tag.id}}">
+                {{t.tag.name}}
+                <mat-icon [ngStyle]="{'color': getTagColor(t.tag.id)}">
+                  circle
+                </mat-icon>
+              </label>
+            </li>
+          </ul>
+      </li>
+      <li>
+        <a href="https://github.com/amiller68" target="_blank">My GitHub</a>
+      </li>
+    </ul>
+  </aside>
+  <main>
+    <mat-toolbar class="toolbar">
+      <span>projects.</span>
+      <span class="spacer"></span>
+      <button mat-button class='toolbar-button' *ngIf="authenticated"
+              aria-label="Add proejct"
+              (click)="openProjectEditor({project: defaultProjectCopy, tags: getTags(), action: 'Add'})">
+        <mat-icon>add</mat-icon>
+      </button>
+    </mat-toolbar>
+    <hr>
+    <p>Take a look at what I've been up to</p>
+    <mat-accordion>
+      <mat-expansion-panel *ngFor="let p of filteredProjectPanels"
+                           hideToggle
+                           (opened)="p.opened = true"
+                           (closed)="p.opened = false">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <span>{{p.project.title}}</span>
+          </mat-panel-title>
+          <mat-panel-description>
+            <div class="project-tag-icons">
+              <mat-icon *ngFor="let t of p.project.tags"
+                        [ngStyle]="{'color': getTagColor(t), 'float': 'right'}"
+                        matTooltip="getTagName(t)"
+                        [matTooltipPosition]="tagToolTipPosition">
+                circle
+              </mat-icon>
+            </div>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <!--This renders the project description in Markdown-->
+        <md-editor name="Content"
+                   [height]="'400px'"
+                   [mode]="'preview'"
+                   [options]="options"
+                   [(ngModel)]="p.project.description">
+        </md-editor>
+        <div class="change-content-buttons" *ngIf="authenticated">
+          <button (click)="openProjectEditor({project: p.project, tags: getTags(), action: 'Edit'})">
+            Edit
+          </button>
+          <button (click)="openProjectEditor({project: p.project, tags: getTags(), action: 'Delete'})">
+            Delete
+          </button>
         </div>
-      </mat-panel-title>
-      <mat-panel-description>
-        {{p.project.description}}
-      </mat-panel-description>
-    </mat-expansion-panel-header>
-    <p>This is the preview page of the project...</p>
-  </mat-expansion-panel>
-</mat-accordion>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </main>
+</body>

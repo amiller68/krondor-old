@@ -4,8 +4,28 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {catchError, map, Observable, of, tap} from "rxjs";
 import * as moment from "moment";
 import * as _ from "underscore";
+import * as uuid from 'uuid';
 
 const deployedHostname: string = 'www.krondor.org';
+
+export type serverProject = Omit<Project, 'id'>;
+
+export interface serverProjectEntry {
+  [id: string]: serverProject
+}
+
+export function projectToServerProjectEntry(project: Project) {
+  let ret: serverProjectEntry = {}
+  ret[project.id] = {
+    startDate: project.startDate,
+    endDate: project.endDate,
+    title: project.title,
+    description: project.description,
+    platform: project.platform,
+    tags: project.tags
+  } as serverProject
+  return ret;
+}
 
 //@todo: type this more strongly
 export type dbResponse = {
@@ -20,6 +40,8 @@ export class ProjectsService {
   //@todo: Upgrade to HTTPS
   private deployedProjectsUrl = 'http://www.krondor.org/api/projects';  // URL to deployed web api
   private developmentProjectsUrl = 'http://localhost:3000/api/projects';  // URL to development web api
+  private projectsUrl = window.location.hostname === deployedHostname ?
+    this.deployedProjectsUrl : this.developmentProjectsUrl;
 
 
   httpOptions = {
@@ -33,11 +55,8 @@ export class ProjectsService {
   constructor(private http: HttpClient) {}
 
   getProjectsAndTags(): Observable<[Project[], Tag[]]> {
-    let projectsUrl = window.location.hostname === deployedHostname ?
-      this.deployedProjectsUrl : this.developmentProjectsUrl;
-    return this.http.get<Project[]>(projectsUrl, this.httpOptions)
+    return this.http.get<Project[]>(this.projectsUrl, this.httpOptions)
       .pipe(
-        tap(_ => console.log("Fetched projects!")),
         map((resp): [Project[], Tag[]] =>
           //@ts-ignore
           this.extractProjectsAndTags(resp)
@@ -51,6 +70,47 @@ export class ProjectsService {
       );
   }
 
+  addProject(project: Project): Observable<Project> {
+    //Before we submit a new project, need to format it properly
+    let data: any = {...project};
+    let id = uuid.v4();
+    data.id  = id;
+    data.startDate = moment(project.startDate).format('MMDDYYYY');
+    if (project.endDate !== undefined) {
+      data.endDate = moment(project.endDate).format('MMDDYYYY');
+    }
+    else {
+      data.endDate = '';
+    }
+    return this.http.post<Project>(this.projectsUrl, data, this.httpOptions)
+      .pipe(
+        tap(_ => console.log("Added a project!")),
+        map((resp: any): Project => {
+          return resp.data;
+        }),
+        catchError(this.handleError<Project>('addProject', project))
+      );
+  }
+
+  deleteProject(id: string): Observable<unknown> {
+    const url = `${this.projectsUrl}/${id}`;
+    return this.http.delete(url, this.httpOptions)
+      .pipe(
+        catchError(this.handleError('deleteProject'))
+      );
+  }
+
+  updateProject(project: Project): Observable<Project> {
+    return this.http.put<Project>(this.projectsUrl, project, this.httpOptions)
+      .pipe(
+        map((resp: any): Project => {
+          return resp.data;
+        }),
+        catchError(this.handleError('updateProject', project))
+      );
+  }
+
+
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
       console.log("Error occurred during", operation,": ", error)
@@ -59,34 +119,34 @@ export class ProjectsService {
   }
 
   extractProjectsAndTags(resp: dbResponse): [Project[], Tag[]] {
-    let projects = _.map(resp.projects,(data: any, key: string) => {
-      let start_date = moment(data.startDate, "MMDDYYYY").toDate();
-      let end_date = data.endDate === '' ? undefined : moment(data.endDate, "MMDDYYYY").toDate()
-      return {
-        id: key,
-        startDate: start_date,
-        endDate: end_date,
-        title: data.title,
-        description: data.description,
-        platform: data.platform,
-        tags: data.tags
-      }
+    let projects = _.map(Object.entries(resp.projects),([id, data]) => {
+      return this.extractProject(id, data)
     })
-    let tags = _.map(resp.tags, (data: any, key: string) => {
-      // let rbg_tokens = data.color.split(',');
-      // let rbg_vals: [number, number, number] = [0, 0, 0]
-      //
-      // //Ugly but type safe!
-      // rbg_vals[0] = parseInt(rbg_tokens[0]);
-      // rbg_vals[1] = parseInt(rbg_tokens[1]);
-      // rbg_vals[2] = parseInt(rbg_tokens[1]);
-
-      return {
-        id: key,
-        name: data.name,
-        color: data.color
-      }
+    let tags = _.map(Object.entries(resp.tags), ([id, data]) => {
+      return this.extractTag(id, data);
     })
     return [projects, tags]
+  }
+
+  extractProject(id: string, data: any): Project {
+    let start_date = moment(data.startDate, "MMDDYYYY").toDate();
+    let end_date = data.endDate === '' ? undefined : moment(data.endDate, "MMDDYYYY").toDate()
+    return {
+      id: id,
+      startDate: start_date,
+      endDate: end_date,
+      title: data.title,
+      description: data.description,
+      platform: data.platform,
+      tags: data.tags
+    }
+  }
+
+  extractTag(id: string, data: any): Tag {
+    return {
+      id: id,
+      name: data.name,
+      color: data.color
+    }
   }
 }

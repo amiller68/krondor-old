@@ -23,6 +23,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSelectModule } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatTableModule } from "@angular/material/table";
 
 //Markdown Module
 import { LMarkdownEditorModule } from 'ngx-markdown-editor';
@@ -63,10 +64,11 @@ import { ProjectEditorComponent } from './pages/project-editor/project-editor.co
     FormsModule,
     ReactiveFormsModule,
     MatTooltipModule,
-    LMarkdownEditorModule
+    LMarkdownEditorModule,
+    MatTableModule
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
-
+//@ts-ignore
 export class AppModule { }
