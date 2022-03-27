@@ -34,6 +34,7 @@ import { ProjectsPageComponent } from "./pages/projects-page/projects-page.compo
 import { PhotosPageComponent } from './pages/photos-page/photos-page.component';
 import {AboutPageComponent} from "./pages/about-page/about-page.component";
 import { ProjectEditorComponent } from './pages/project-editor/project-editor.component';
+import {ErrorPageComponent} from "./pages/error-page/error-page.component";
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { ProjectEditorComponent } from './pages/project-editor/project-editor.co
     ProjectsPageComponent,
     PhotosPageComponent,
     AboutPageComponent,
-    ProjectEditorComponent
+    ProjectEditorComponent,
+    ErrorPageComponent
   ],
   imports: [
     BrowserModule,

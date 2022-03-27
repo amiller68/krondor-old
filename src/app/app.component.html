@@ -1,34 +1,27 @@
-<p>
-  <mat-toolbar class="toolbar">
-    <button mat-button [matMenuTriggerFor]="menu" class="menu-button">
-      <mat-icon>
-        menu
-      </mat-icon>
-    </button>
-    &nbsp;
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item (click)="buttonNavigate('/')">Home</button>
-      <button mat-menu-item (click)="buttonNavigate('/projects')">Projects</button>
-      <button mat-menu-item (click)="buttonNavigate('/photos')">Photo Gallery (Coming Soon)</button>
-      <button mat-menu-item (click)="buttonNavigate('/about')">About</button>
-    </mat-menu>
-    <a routerLink="/" routerLinkActive="active" style="text-decoration: none;color: black">
-      <span>krondor.</span>
-    </a>
-    <span class="spacer"></span>
-    <button mat-icon-button class='toolbar-button'
-            aria-label="About this site"
-            (click)="buttonNavigate('/about')">
-      <mat-icon>contact_support</mat-icon>
-    </button>
-<!--    @todo: Implement sharing-->
-<!--    <button mat-button-->
-<!--            class="share-icon"-->
-<!--            aria-label="Share this site!">-->
-<!--      <mat-icon>share</mat-icon>-->
-<!--    </button>-->
-  </mat-toolbar>
-</p>
+<mat-toolbar class="app-toolbar">
+  <button mat-button [matMenuTriggerFor]="menu" class="menu-button">
+    <mat-icon>
+      menu
+    </mat-icon>
+  </button>
+  &nbsp;
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="buttonNavigate('/')">Home</button>
+    <button mat-menu-item (click)="buttonNavigate('/projects')">Projects</button>
+    <button mat-menu-item (click)="buttonNavigate('/photos')">Photo Gallery (Coming Soon)</button>
+    <button mat-menu-item (click)="buttonNavigate('/about')">About</button>
+  </mat-menu>
+  <a routerLink="/" routerLinkActive="active" style="text-decoration: none;color: black">
+    <span>krondor.</span>
+  </a>
+  <span class="spacer"></span>
+  <button mat-icon-button class='toolbar-button'
+          aria-label="About this site"
+          (click)="buttonNavigate('/about')">
+    <mat-icon>contact_support</mat-icon>
+  </button>
+</mat-toolbar>
+
 
 <!-- The routed views render in the <router-outlet>-->
 <router-outlet></router-outlet>

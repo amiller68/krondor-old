@@ -4,7 +4,7 @@
       "startDate": null,
       "endDate": null,
       "title": "krondor.org",
-      "description": "# **Welcome to Krondor.org!**\n\n# I'm making this site to catalog my current projets, interests, and writing.\n\nI'm planning on adding new features and pages, like a photo gallery, message board, and online shell, but for now I have to implement the following:\n\n- [ ] Implment HTTPS\n- [ ] Implement application statefulness (NgRx)\n- [ ] Provide authentication infrastructure\n- [ ] Design IRC room?\n- [ ] Configure a mail server\n- [ ] Make content!\n",
+      "description": "# **Welcome to Krondor.org!**\n\n# I'm making this site to catalog my current projets, interests, and writing.\n\nI'm planning on adding new features and pages, like a photo gallery, message board, and online shell, but for now I have to implement the following:\n\n- [ ] Implment HTTPS\n- [x] Normalize styling\n- [-] Implement application statefulness (NgRx)\n- [ ] Provide authentication infrastructure\n- [ ] Design IRC room?\n- [ ] Configure a mail server\n- [ ] News page\n- [ ] Photo gallery\n- [ ] XtermJs runtimes page \n- [ ] New homepage\n",
       "platform": "",
       "tags": [
         "personal",

@@ -1,1 +1,34 @@
+$font-stack: Helvetica, sans-serif
+$primary-color: black
+
+.spacer
+  flex: 1 1 auto
+
+body
+  margin: 0
+  padding: 0
+  background: #c0c0c0
+
+h1
+  margin: 12px 0
+
+hr
+  margin: 0
+  border: none
+  width: auto
+  height: 1px
+  opacity: 0.5
+  background: linear-gradient(to right, red 20%, yellow 20%, yellow 36%, green 36%, green 60%, blue 60%, blue 100%)
+
+p
+  max-width: 50rem
+  line-height: 1.5
+
+button
+  &.focused
+    outline: 1px dotted #000000
+    outline-offset: -4px
+
+  &.active
+    box-shadow: inset -1px -1px #ffffff, inset 1px 1px #0a0a0a, inset -2px -2px #dfdfdf, inset 2px 2px #808080
 

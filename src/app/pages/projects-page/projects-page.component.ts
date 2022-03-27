@@ -28,6 +28,7 @@ export interface ProjectDialogData {
   templateUrl: './projects-page.component.html',
   styleUrls: [
     './projects-page.component.sass',
+    '../../app.component.sass'
   ]
 })
 
