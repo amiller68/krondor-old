@@ -10,8 +10,6 @@ const path = require('path');
 const dir = path.join(__dirname, 'dist/krondor/');
 const dbFile = 'db.json';
 
-app.use(express.static(dir));
-
 if(process.env.NODE_ENV === 'production') {
   console.log("Using forced SSL...")
   app.use((req, res, next) => {
@@ -24,6 +22,9 @@ if(process.env.NODE_ENV === 'production') {
       next()
   })
 }
+
+//Try putting this last
+app.use(express.static(dir));
 
 app.get('/api/projects',(req, res) => {
   console.log("Projects requested.")
