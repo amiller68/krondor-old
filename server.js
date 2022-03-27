@@ -12,17 +12,13 @@ const dbFile = 'db.json';
 
 app.use(express.static(dir));
 
-//Source: https://stackoverflow.com/questions/7185074/heroku-nodejs-http-to-https-ssl-forced-redirect
-const forceSsl = function (req, res, next) {
-  if (req.headers['x-forwarded-proto'] !== 'https') {
-    return res.redirect(['https://', req.get('Host'), req.url].join(''));
-  }
-  return next();
-};
-
-//App server configuration
-if (process.env.NODE_ENV === 'production') {
-  app.use(forceSsl);
+if(process.env.NODE_ENV === 'production') {
+  app.use((req, res, next) => {
+    if (req.header('x-forwarded-proto') !== 'https')
+      res.redirect(`https://${req.header('host')}${req.url}`)
+    else
+      next()
+  })
 }
 
 app.get('/api/projects',(req, res) => {
