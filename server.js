@@ -15,8 +15,8 @@ app.use(express.static(dir));
 if(process.env.NODE_ENV === 'production') {
   console.log("Using forced SSL...")
   app.use((req, res, next) => {
+    console.log("Forwarded Request received over: ", req.header('X-Forwarded-Proto'));
     if (req.header('X-Forwarded-Proto') !== 'https') {
-      console.log("HTTP Request received: ", req.header('X-Forwarded-Proto'));
       console.log("Redirecting to HTTPS...");
       res.redirect(`https://${req.header('host')}${req.url}`);
     }
