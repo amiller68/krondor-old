@@ -12,11 +12,17 @@ const dbFile = 'db.json';
 
 app.use(express.static(dir));
 
-//Enforce HTTPS connections if running as deployed production code
-if (process.env.NODE_ENV === 'production')
-{
-  //@todo: Vet this library
-  app.use(enforce.HTTPS({ trustProtoHeader: true }))
+//Source: https://stackoverflow.com/questions/7185074/heroku-nodejs-http-to-https-ssl-forced-redirect
+const forceSsl = function (req, res, next) {
+  if (req.headers['x-forwarded-proto'] !== 'https') {
+    return res.redirect(['https://', req.get('Host'), req.url].join(''));
+  }
+  return next();
+};
+
+//App server configuration
+if (process.env.NODE_ENV === 'production') {
+  app.use(forceSsl);
 }
 
 app.get('/api/projects',(req, res) => {

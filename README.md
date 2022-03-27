@@ -13,8 +13,9 @@ Run `ng build --watch -c development` in order to build the project correctly, a
 ## Production deployment
 
 When run in production mode, the interface doesn't give users the option to add or modify content; this is to stop people from messing with my content before I implement user authentication.
-In order to run the server properly, use `NODE_ENV=prouction node server.js`
+In order to run the server properly when deployd, use `NODE_ENV=prouction node server.js`
 
+The way `server.js` is configured to run and deployed on Heroku, production builds won't run properly when being tested locally. in my development framework, Production implies the use of HTTPS, which isn't implemented natively, but through Heroku's load balancer.
 ## Notes and Acknowledgments 
  - This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.1.2.
 
