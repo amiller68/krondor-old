@@ -1,5 +1,4 @@
 const express = require("express");
-const data = require('./db.json');
 const fs = require('fs');
 const bodyParser = require('body-parser')
 
@@ -26,6 +25,12 @@ app.get('/api/projects',(req, res) => {
 });
 
 app.post('/api/projects', bodyParser.json(), (req, res) => {
+  if (process.env.NODE_ENV === 'production')
+  {
+    res.status(401)
+    res.send('Unauthorized Request');
+    return;
+  }
   let newProject = req.body;
   console.log("Project Added: ", req.body.id);
   fs.readFile(dbFile, 'utf-8',(err, data) => {
@@ -53,6 +58,12 @@ app.post('/api/projects', bodyParser.json(), (req, res) => {
 });
 
 app.delete('/api/projects/:id', (req, res) => {
+  if (process.env.NODE_ENV === 'production')
+  {
+    res.status(401)
+    res.send('Unauthorized Request');
+    return;
+  }
   let id = req.params.id;
   console.log("Project deletion requested: ", id);
   fs.readFile(dbFile, 'utf-8',(err, data) => {
@@ -71,6 +82,12 @@ app.delete('/api/projects/:id', (req, res) => {
 });
 
 app.put('/api/projects', bodyParser.json(), (req, res) => {
+  if (process.env.NODE_ENV === 'production')
+  {
+    res.status(401)
+    res.send('Unauthorized Request');
+    return;
+  }
   let updatedProject = req.body;
   console.log("Project updated: ", req.body.id);
   fs.readFile(dbFile, 'utf-8',(err, data) => {
@@ -104,4 +121,12 @@ app.get("/*", (req, res) => {
 });
 
 // Listen on all interfaces
-app.listen(process.env.PORT || 3000, () => console.log("Server listening", process.env.PORT || 3000,"!"));
+app.listen(process.env.PORT || 3000, () => {
+  console.log("Server listening", process.env.PORT || 3000,"!")
+  if (process.env.NODE_ENV === 'production') {
+    console.log("Server running in production mode. Closed for requests.");
+  }
+  else {
+    console.log("Server running in development mode. Open for requests.")
+  }
+});

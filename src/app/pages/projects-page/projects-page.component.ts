@@ -5,7 +5,7 @@ import { Project, Tag, defaultProject } from "../../entities/projects";
 import * as _ from 'underscore';
 import {TooltipPosition} from "@angular/material/tooltip";
 import { ProjectEditorComponent } from "../project-editor/project-editor.component";
-import { MdEditorOption, UploadResult } from "ngx-markdown-editor";
+import { MdEditorOption } from "ngx-markdown-editor";
 
 export interface ProjectPanel {
   project: Project,
@@ -35,7 +35,7 @@ export class ProjectsPageComponent implements OnInit {
   projectPanels: ProjectPanel[] = [];
   filteredProjectPanels: ProjectPanel[] = [];
   tagOptions: TagOption[] = [];
-  authenticated: boolean = true;
+  authenticated: boolean = isDevMode();
 
   //Makes the HTML happy
   defaultProjectCopy: Project = defaultProject;
@@ -83,6 +83,14 @@ export class ProjectsPageComponent implements OnInit {
           // console.log("Extracted ProjectPanels: ", this.projectPanels);
           // console.log("Extracted Tags: ", this.tagOptions);
         }
+        else {
+          this.projectPanels = [
+            {
+              project: defaultProject,
+              opened: false
+            }];
+          this.filteredProjectPanels = this.projectPanels;
+        }
       })
   }
 
@@ -129,10 +137,9 @@ export class ProjectsPageComponent implements OnInit {
   //Opens the dialog panel for creating a new project
   //obj is any to make it malleable
   openProjectEditor(projectData: ProjectDialogData) {
-    let data = projectData;
     const dialogRef = this.dialog.open(ProjectEditorComponent, {
       disableClose: true,
-      data: data
+      data: projectData
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -212,7 +219,7 @@ export class ProjectsPageComponent implements OnInit {
   deleteProject(id: string) {
     console.log("Deleted project: ", id)
     this.projectService.deleteProject(id)
-      .subscribe((data) => {
+      .subscribe(() => {
         console.log("Project added successfully!");
         this.projectPanels = _.filter(this.projectPanels, (p) => {
           return p.project.id !== id

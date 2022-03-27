@@ -1,9 +1,10 @@
 {
   "projects": {
     "fcbcb991-aade-4432-b9d6-f80f581a9a02": {
-      "startDate": "2022-03-23T05:00:00.000Z",
+      "startDate": null,
+      "endDate": null,
       "title": "krondor.org",
-      "description": "# Welcome to Krondor.org!\n",
+      "description": "# **Welcome to Krondor.org!**\n\n# I'm making this site to catalog my current projets, interests, and writing.\n\nI'm planning on adding new features and pages, like a photo gallery, message board, and online shell, but for now I have to implement the following:\n\n- [ ] Implment HTTPS\n- [ ] Implement application statefulness (NgRx)\n- [ ] Provide authentication infrastructure\n- [ ] Design IRC room?\n- [ ] Configure a mail server\n- [ ] Make content!\n",
       "platform": "",
       "tags": [
         "personal",
