@@ -13,9 +13,12 @@ const dbFile = 'db.json';
 app.use(express.static(dir));
 
 if(process.env.NODE_ENV === 'production') {
+  console.log("Using forced SSL...")
   app.use((req, res, next) => {
-    if (req.header('x-forwarded-proto') !== 'https')
-      res.redirect(`https://${req.header('host')}${req.url}`)
+    if (req.header('x-forwarded-proto') !== 'https') {
+      console.log("HTTP Request received, redirecting to HTTPS");
+      res.redirect(`https://${req.header('host')}${req.url}`);
+    }
     else
       next()
   })
