@@ -37,8 +37,8 @@ export type dbResponse = {
   providedIn: 'root'
 })
 export class ProjectsService {
-  //@todo: Upgrade to HTTPS
-  private deployedProjectsUrl = 'http://www.krondor.org/api/projects';  // URL to deployed web api
+  //@todo: Upgrade to HTTPSnpm install express-sslify --save
+  private deployedProjectsUrl = 'https://www.krondor.org/api/projects';  // URL to deployed web api
   private developmentProjectsUrl = 'http://localhost:3000/api/projects';  // URL to development web api
   private projectsUrl = window.location.hostname === deployedHostname ?
     this.deployedProjectsUrl : this.developmentProjectsUrl;

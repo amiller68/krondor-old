@@ -1,6 +1,7 @@
 const express = require("express");
 const fs = require('fs');
 const bodyParser = require('body-parser')
+const enforce = require('express-sslify');
 
 const app = express();
 
@@ -10,6 +11,13 @@ const dir = path.join(__dirname, 'dist/krondor/');
 const dbFile = 'db.json';
 
 app.use(express.static(dir));
+
+//Enforce HTTPS connections if running as deployed production code
+if (process.env.NODE_ENV === 'production')
+{
+  //@todo: Vet this library
+  app.use(enforce.HTTPS({ trustProtoHeader: true }))
+}
 
 app.get('/api/projects',(req, res) => {
   console.log("Projects requested.")
