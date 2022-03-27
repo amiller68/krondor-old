@@ -6,6 +6,7 @@ import { AboutPageComponent } from './pages/about-page/about-page.component';
 import { ProjectsPageComponent } from './pages/projects-page/projects-page.component';
 import { ErrorPageComponent } from './pages/error-page/error-page.component';
 import {PhotosPageComponent} from "./pages/photos-page/photos-page.component";
+import {LoginPageComponent} from "./pages/login-page/login-page.component";
 
 
 const routes: Routes = [
@@ -13,6 +14,7 @@ const routes: Routes = [
   { path: 'about', component: AboutPageComponent },
   { path: 'projects', component: ProjectsPageComponent },
   { path: 'photos', component: PhotosPageComponent },
+  { path: 'login', component: LoginPageComponent },
   // Wild card route
   { path: '**', component: ErrorPageComponent }
 ];

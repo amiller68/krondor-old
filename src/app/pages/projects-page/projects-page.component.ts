@@ -6,6 +6,7 @@ import * as _ from 'underscore';
 import {TooltipPosition} from "@angular/material/tooltip";
 import { ProjectEditorComponent } from "../project-editor/project-editor.component";
 import { MdEditorOption } from "ngx-markdown-editor";
+import { AuthService } from "@auth0/auth0-angular";
 
 export interface ProjectPanel {
   project: Project,
@@ -36,7 +37,7 @@ export class ProjectsPageComponent implements OnInit {
   projectPanels: ProjectPanel[] = [];
   filteredProjectPanels: ProjectPanel[] = [];
   tagOptions: TagOption[] = [];
-  authenticated: boolean = isDevMode();
+  devMode = isDevMode()
 
   //Makes the HTML happy
   defaultProjectCopy: Project = defaultProject;
@@ -53,7 +54,8 @@ export class ProjectsPageComponent implements OnInit {
 
   constructor(
     private projectService: ProjectsService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    public auth: AuthService
   ) { }
 
   ngOnInit(): void {
@@ -189,7 +191,7 @@ export class ProjectsPageComponent implements OnInit {
     return "No Name"
   }
 
-  addProject(data: Project) {
+  private addProject(data: Project) {
     console.log("Added project: ", data)
     this.projectService.addProject(data)
       .subscribe((data) => {
@@ -202,7 +204,7 @@ export class ProjectsPageComponent implements OnInit {
       })
   }
 
-  updateProject(data: Project) {
+  private updateProject(data: Project) {
     console.log("Updated project: ", data)
     this.projectService.updateProject(data)
       .subscribe((data) => {
@@ -217,7 +219,7 @@ export class ProjectsPageComponent implements OnInit {
       })
   }
 
-  deleteProject(id: string) {
+  private deleteProject(id: string) {
     console.log("Deleted project: ", id)
     this.projectService.deleteProject(id)
       .subscribe(() => {

@@ -7,7 +7,7 @@ import {CommonModule} from "@angular/common";
 
 //App Modules
 import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
+import {AppComponent, AuthButtonComponent} from './app.component';
 
 //Angular Materials
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -35,6 +35,11 @@ import { PhotosPageComponent } from './pages/photos-page/photos-page.component';
 import {AboutPageComponent} from "./pages/about-page/about-page.component";
 import { ProjectEditorComponent } from './pages/project-editor/project-editor.component';
 import {ErrorPageComponent} from "./pages/error-page/error-page.component";
+import { LoginPageComponent } from './pages/login-page/login-page.component';
+
+//Auth module
+import { AuthModule } from "@auth0/auth0-angular";
+import { environment as env } from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -44,7 +49,9 @@ import {ErrorPageComponent} from "./pages/error-page/error-page.component";
     PhotosPageComponent,
     AboutPageComponent,
     ProjectEditorComponent,
-    ErrorPageComponent
+    ErrorPageComponent,
+    LoginPageComponent,
+    AuthButtonComponent
   ],
   imports: [
     BrowserModule,
@@ -67,7 +74,11 @@ import {ErrorPageComponent} from "./pages/error-page/error-page.component";
     ReactiveFormsModule,
     MatTooltipModule,
     LMarkdownEditorModule,
-    MatTableModule
+    MatTableModule,
+
+    AuthModule.forRoot({
+      ...env.auth
+    }),
   ],
   providers: [],
   bootstrap: [AppComponent]
