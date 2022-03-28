@@ -12,6 +12,7 @@ const dir = path.join(__dirname, 'dist/krondor/');
 const dbFile = 'db.json';
 
 function jwtCheckMiddleWare(req, res, next) {
+  console.log("Auth Middleware fired.")
   jwt({
     secret: jwks.expressJwtSecret({
       cache: true,
@@ -29,7 +30,7 @@ function jwtCheckMiddleWare(req, res, next) {
 if(process.env.NODE_ENV === 'production') {
   console.log("Using forced SSL...")
   app.use((req, res, next) => {
-    console.log("Forwarded Request received over: ", req.header('X-Forwarded-Proto'));
+    //console.log("Forwarded Request received over: ", req.header('X-Forwarded-Proto'));
     if (req.header('X-Forwarded-Proto') !== 'https') {
       console.log("Redirecting to HTTPS...");
       res.redirect(`https://${req.header('host')}${req.url}`);
@@ -65,12 +66,12 @@ app.get('/api/projects',(req, res) => {
 });
 
 app.post('/api/projects', jwtCheckMiddleWare, bodyParser.json(), (req, res) => {
-  if (process.env.NODE_ENV === 'production')
-  {
-    res.status(401)
-    res.send('Unauthorized Request');
-    return;
-  }
+  // if (process.env.NODE_ENV === 'production')
+  // {
+  //   res.status(401)
+  //   res.send('Unauthorized Request');
+  //   return;
+  // }
   let newProject = req.body;
   console.log("Project Added: ", req.body.id);
   fs.readFile(dbFile, 'utf-8',(err, data) => {
@@ -98,12 +99,12 @@ app.post('/api/projects', jwtCheckMiddleWare, bodyParser.json(), (req, res) => {
 });
 
 app.delete('/api/projects/:id', jwtCheckMiddleWare, (req, res) => {
-  if (process.env.NODE_ENV === 'production')
-  {
-    res.status(401)
-    res.send('Unauthorized Request');
-    return;
-  }
+  // if (process.env.NODE_ENV === 'production')
+  // {
+  //   res.status(401)
+  //   res.send('Unauthorized Request');
+  //   return;
+  // }
   let id = req.params.id;
   console.log("Project deletion requested: ", id);
   fs.readFile(dbFile, 'utf-8',(err, data) => {
@@ -122,12 +123,12 @@ app.delete('/api/projects/:id', jwtCheckMiddleWare, (req, res) => {
 });
 
 app.put('/api/projects', jwtCheckMiddleWare, bodyParser.json(), (req, res) => {
-  if (process.env.NODE_ENV === 'production')
-  {
-    res.status(401)
-    res.send('Unauthorized Request');
-    return;
-  }
+  // if (process.env.NODE_ENV === 'production')
+  // {
+  //   res.status(401)
+  //   res.send('Unauthorized Request');
+  //   return;
+  // }
   let updatedProject = req.body;
   console.log("Project updated: ", req.body.id);
   fs.readFile(dbFile, 'utf-8',(err, data) => {
