@@ -3,7 +3,7 @@ const fs = require('fs');
 const bodyParser = require('body-parser')
 const jwt = require('express-jwt');
 const jwks = require('jwks-rsa');
-const jwtAuthz = require('express-jwt-authz');
+const { requiredScopes } = require('express-oauth2-jwt-bearer');
 
 const app = express();
 
@@ -30,14 +30,9 @@ function jwtCheck(req, res, next) {
   next();
 }
 
-const jwtScopeOptions = {
-  checkAllScopes: true,
-  customScopeKey: 'permissions'
-}
-
 function projectWriteCheck(req, res, next) {
   if(process.env.NODE_ENV === 'production') {
-    jwtAuthz(['write:projects'], jwtScopeOptions);
+    requiredScopes('write:projects');
   }
   next();
 }

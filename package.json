@@ -34,6 +34,7 @@
     "express": "^4.17.2",
     "express-jwt": "^6.1.1",
     "express-jwt-authz": "^2.4.1",
+    "express-oauth2-jwt-bearer": "^1.1.0",
     "express-sslify": "^1.2.0",
     "font-awesome": "^4.7.0",
     "hammerjs": "^2.0.8",
