@@ -33,6 +33,8 @@ const jwtCheck = (req, res, next) => {
   } catch(err)
   {
     console.log("Error validating token: ", err);
+    res.status(401)
+    res.send('Unauthorized Request');
   }
 }
 
@@ -47,6 +49,8 @@ const projectWriteCheck = (req, res, next) => {
   } catch(err)
   {
     console.log("Error validating token: ", err);
+    res.status(401)
+    res.send('Unauthorized Request');
   }
 }
 
@@ -115,12 +119,6 @@ app.post('/api/projects', jwtCheck, projectWriteCheck, (req, res) => {
 });
 
 app.delete('/api/projects/:id', jwtCheck, projectWriteCheck, (req, res) => {
-  // if (process.env.NODE_ENV === 'production')
-  // {
-  //   res.status(401)
-  //   res.send('Unauthorized Request');
-  //   return;
-  // }
   let id = req.params.id;
   console.log("Project deletion requested: ", id);
   fs.readFile(dbFile, 'utf-8',(err, data) => {
