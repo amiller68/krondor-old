@@ -3,7 +3,7 @@ const fs = require('fs');
 const bodyParser = require('body-parser')
 const jwt = require('express-jwt');
 const jwks = require('jwks-rsa');
-const admin_email = 'alexanderscottmiller@gmail.com';
+const jwtAuthz = require('express-jwt-authz');
 
 const app = express();
 
@@ -11,27 +11,46 @@ const app = express();
 const path = require('path');
 const dir = path.join(__dirname, 'dist/krondor/');
 const dbFile = 'db.json';
+const projectPermissions = 'write:projects';
 
 function jwtCheckMiddleWare(req, res, next) {
-  console.log("Auth Middleware fired.")
-  jwt({
-    secret: jwks.expressJwtSecret({
-      cache: true,
-      rateLimit: true,
-      jwksRequestsPerMinute: 5,
-      jwksUri: 'https://dev-7--1a-5y.us.auth0.com/.well-known/jwks.json'
-    }),
-    audience: 'https://www.krondor.org/api/',
-    issuer: 'https://dev-7--1a-5y.us.auth0.com/',
-    algorithms: ['RS256']
-  });
-  //For now, only I should authenticate changes:
-  console.log("Requesting user: ", req.user);
-  if (req.user === admin_email) {
-    next();
+  if(process.env.NODE_ENV === 'production') {
+    console.log("Auth Middleware fired.")
+    jwt({
+      secret: jwks.expressJwtSecret({
+        cache: true,
+        rateLimit: true,
+        jwksRequestsPerMinute: 5,
+        jwksUri: 'https://dev-7--1a-5y.us.auth0.com/.well-known/jwks.json'
+      }),
+      audience: 'https://www.krondor.org/api/',
+      issuer: 'https://dev-7--1a-5y.us.auth0.com/',
+      algorithms: ['RS256']
+    });
   }
+  next()
 }
 
+function projectWriteCheck(req, res, next) {
+  if(process.env.NODE_ENV === 'production') {
+    jwtAuthz([projectPermissions]);
+  }
+  next();
+}
+
+const authMiddleWare = {
+  jwtCheckMiddleWare,
+  projectWriteCheck
+}
+
+// Enable the use of request body parsing middleware
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+
+//Only go through the process of authentication if production
+//This effects all routes on the appication
 if(process.env.NODE_ENV === 'production') {
   console.log("Using forced SSL...")
   app.use((req, res, next) => {
@@ -43,15 +62,6 @@ if(process.env.NODE_ENV === 'production') {
     else
       next()
   })
-  // app.use((req, res, next) => {
-  //   console.log("Auth Middleware fired.")
-  //   if (req.method === "GET") {
-  //     console.log("Bypass auth: GET req");
-  //     next();
-  //   }
-  //   jwtCheck;
-  //   next();
-  // });
 }
 
 //Try putting this last
@@ -70,7 +80,7 @@ app.get('/api/projects',(req, res) => {
   });
 });
 
-app.post('/api/projects', jwtCheckMiddleWare, bodyParser.json(), (req, res) => {
+app.post('/api/projects', authMiddleWare, (req, res) => {
   // if (process.env.NODE_ENV === 'production')
   // {
   //   res.status(401)
@@ -103,7 +113,7 @@ app.post('/api/projects', jwtCheckMiddleWare, bodyParser.json(), (req, res) => {
   });
 });
 
-app.delete('/api/projects/:id', jwtCheckMiddleWare, (req, res) => {
+app.delete('/api/projects/:id', authMiddleWare, (req, res) => {
   // if (process.env.NODE_ENV === 'production')
   // {
   //   res.status(401)
@@ -127,7 +137,7 @@ app.delete('/api/projects/:id', jwtCheckMiddleWare, (req, res) => {
   });
 });
 
-app.put('/api/projects', jwtCheckMiddleWare, bodyParser.json(), (req, res) => {
+app.put('/api/projects', authMiddleWare, (req, res) => {
   // if (process.env.NODE_ENV === 'production')
   // {
   //   res.status(401)
