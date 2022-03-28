@@ -37,10 +37,10 @@ const jwtCheck = (req, res, next) => {
   }
 }
 
-function projectWriteCheck(req, res, next) {
+const projectWriteCheck = (req, res, next) => {
   try {
     if (process.env.NODE_ENV === 'production') {
-      console.log("Auth Middleware firing.")
+      console.log("Role check Middleware firing.")
       let projectCheckMiddleware = requiredScopes('write:projects');
       return projectCheckMiddleware;
     } else {
