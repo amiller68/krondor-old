@@ -11,7 +11,6 @@ const app = express();
 const path = require('path');
 const dir = path.join(__dirname, 'dist/krondor/');
 const dbFile = 'db.json';
-const projectPermissions = 'write:projects';
 
 function jwtCheck(req, res, next) {
   if(process.env.NODE_ENV === 'production') {
@@ -28,12 +27,12 @@ function jwtCheck(req, res, next) {
       algorithms: ['RS256']
     });
   }
-  next()
+  next();
 }
 
 function projectWriteCheck(req, res, next) {
   if(process.env.NODE_ENV === 'production') {
-    jwtAuthz([projectPermissions]);
+    jwtAuthz(['write:projects']);
   }
   next();
 }
@@ -76,12 +75,6 @@ app.get('/api/projects',(req, res) => {
 });
 
 app.post('/api/projects', jwtCheck, projectWriteCheck, (req, res) => {
-  // if (process.env.NODE_ENV === 'production')
-  // {
-  //   res.status(401)
-  //   res.send('Unauthorized Request');
-  //   return;
-  // }
   let newProject = req.body;
   console.log("Project Added: ", req.body.id);
   fs.readFile(dbFile, 'utf-8',(err, data) => {
