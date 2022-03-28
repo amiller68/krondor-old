@@ -30,9 +30,14 @@ function jwtCheck(req, res, next) {
   next();
 }
 
+const jwtScopeOptions = {
+  checkAllScopes: true,
+  customScopeKey: 'permissions'
+}
+
 function projectWriteCheck(req, res, next) {
   if(process.env.NODE_ENV === 'production') {
-    jwtAuthz(['write:projects']);
+    jwtAuthz(['write:projects'], jwtScopeOptions);
   }
   next();
 }
@@ -43,7 +48,7 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-//Only go through the process of authentication if production
+//Only go through the process of https forwarding if running production
 //This effects all routes on the appication
 if(process.env.NODE_ENV === 'production') {
   console.log("Using forced SSL...")
