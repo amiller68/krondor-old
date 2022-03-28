@@ -11,17 +11,20 @@ const path = require('path');
 const dir = path.join(__dirname, 'dist/krondor/');
 const dbFile = 'db.json';
 
-var jwtCheck = jwt({
-  secret: jwks.expressJwtSecret({
-    cache: true,
-    rateLimit: true,
-    jwksRequestsPerMinute: 5,
-    jwksUri: 'https://dev-7--1a-5y.us.auth0.com/.well-known/jwks.json'
-  }),
-  audience: 'https://www.krondor.org/api/',
-  issuer: 'https://dev-7--1a-5y.us.auth0.com/',
-  algorithms: ['RS256']
-});
+function jwtCheckMiddleWare(req, res, next) {
+  jwt({
+    secret: jwks.expressJwtSecret({
+      cache: true,
+      rateLimit: true,
+      jwksRequestsPerMinute: 5,
+      jwksUri: 'https://dev-7--1a-5y.us.auth0.com/.well-known/jwks.json'
+    }),
+    audience: 'https://www.krondor.org/api/',
+    issuer: 'https://dev-7--1a-5y.us.auth0.com/',
+    algorithms: ['RS256']
+  });
+  next()
+}
 
 if(process.env.NODE_ENV === 'production') {
   console.log("Using forced SSL...")
@@ -34,15 +37,15 @@ if(process.env.NODE_ENV === 'production') {
     else
       next()
   })
-  app.use((req, res, next) => {
-    console.log("Auth Middleware fired.")
-    if (req.method === "GET") {
-      console.log("Bypass auth: GET req");
-      next();
-    }
-    jwtCheck;
-    next();
-  });
+  // app.use((req, res, next) => {
+  //   console.log("Auth Middleware fired.")
+  //   if (req.method === "GET") {
+  //     console.log("Bypass auth: GET req");
+  //     next();
+  //   }
+  //   jwtCheck;
+  //   next();
+  // });
 }
 
 //Try putting this last
@@ -61,7 +64,7 @@ app.get('/api/projects',(req, res) => {
   });
 });
 
-app.post('/api/projects', bodyParser.json(), (req, res) => {
+app.post('/api/projects', jwtCheckMiddleWare, bodyParser.json(), (req, res) => {
   if (process.env.NODE_ENV === 'production')
   {
     res.status(401)
@@ -94,7 +97,7 @@ app.post('/api/projects', bodyParser.json(), (req, res) => {
   });
 });
 
-app.delete('/api/projects/:id', (req, res) => {
+app.delete('/api/projects/:id', jwtCheckMiddleWare, (req, res) => {
   if (process.env.NODE_ENV === 'production')
   {
     res.status(401)
@@ -118,7 +121,7 @@ app.delete('/api/projects/:id', (req, res) => {
   });
 });
 
-app.put('/api/projects', bodyParser.json(), (req, res) => {
+app.put('/api/projects', jwtCheckMiddleWare, bodyParser.json(), (req, res) => {
   if (process.env.NODE_ENV === 'production')
   {
     res.status(401)
