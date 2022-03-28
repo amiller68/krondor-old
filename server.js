@@ -3,6 +3,7 @@ const fs = require('fs');
 const bodyParser = require('body-parser')
 const jwt = require('express-jwt');
 const jwks = require('jwks-rsa');
+const admin_email = 'alexanderscottmiller@gmail.com';
 
 const app = express();
 
@@ -24,7 +25,11 @@ function jwtCheckMiddleWare(req, res, next) {
     issuer: 'https://dev-7--1a-5y.us.auth0.com/',
     algorithms: ['RS256']
   });
-  next()
+  //For now, only I should authenticate changes:
+  console.log("Requesting user: ", req.user);
+  if (req.use === admin_email) {
+    next();
+  }
 }
 
 if(process.env.NODE_ENV === 'production') {
