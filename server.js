@@ -32,9 +32,10 @@ const jwtCheck = (req, res, next) => {
     }
   } catch(err)
   {
-    console.log("Error validating token: ", err);
-    res.status(401)
-    res.send('Unauthorized Request');
+    // console.log("Error validating token: ", err);
+    // res.status(401)
+    // res.send('Unauthorized Request');
+    next(err)
   }
 }
 
@@ -48,9 +49,10 @@ const projectWriteCheck = (req, res, next) => {
     }
   } catch(err)
   {
-    console.log("Error validating token: ", err);
-    res.status(401)
-    res.send('Unauthorized Request');
+    // console.log("Error validating token: ", err);
+    // res.status(401)
+    // res.send('Unauthorized Request');
+    next(err)
   }
 }
 
