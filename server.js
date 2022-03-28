@@ -3,7 +3,7 @@ const fs = require('fs');
 const bodyParser = require('body-parser')
 const jwt = require('express-jwt');
 const jwks = require('jwks-rsa');
-const { auth, requiredScopes } = require('express-oauth2-jwt-bearer');
+// const { auth, requiredScopes } = require('express-oauth2-jwt-bearer');
 
 const app = express();
 
@@ -32,28 +32,23 @@ const jwtCheck = (req, res, next) => {
     }
   } catch(err)
   {
-    // console.log("Error validating token: ", err);
-    // res.status(401)
-    // res.send('Unauthorized Request');
     next(err)
   }
 }
 
 const projectWriteCheck = (req, res, next) => {
-  try {
-    if (process.env.NODE_ENV === 'production') {
-      console.log("Role check Middleware firing.")
-      requiredScopes('write:projects');
-    } else {
-      return next();
-    }
-  } catch(err)
-  {
-    // console.log("Error validating token: ", err);
-    // res.status(401)
-    // res.send('Unauthorized Request');
-    next(err)
-  }
+  next();
+  // try {
+  //   if (process.env.NODE_ENV === 'production') {
+  //     console.log("Role check Middleware firing.")
+  //     requiredScopes('write:projects');
+  //   } else {
+  //     return next();
+  //   }
+  // } catch(err)
+  // {
+  //   next(err)
+  // }
 }
 
 // Enable the use of request body parsing middleware
@@ -139,12 +134,6 @@ app.delete('/api/projects/:id', jwtCheck, projectWriteCheck, (req, res) => {
 });
 
 app.put('/api/projects', jwtCheck, projectWriteCheck, (req, res) => {
-  // if (process.env.NODE_ENV === 'production')
-  // {
-  //   res.status(401)
-  //   res.send('Unauthorized Request');
-  //   return;
-  // }
   let updatedProject = req.body;
   console.log("Project updated: ", req.body.id);
   fs.readFile(dbFile, 'utf-8',(err, data) => {
