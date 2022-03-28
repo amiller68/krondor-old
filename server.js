@@ -3,7 +3,7 @@ const fs = require('fs');
 const bodyParser = require('body-parser')
 const jwt = require('express-jwt');
 const jwks = require('jwks-rsa');
-const { requiredScopes } = require('express-oauth2-jwt-bearer');
+const { auth, requiredScopes } = require('express-oauth2-jwt-bearer');
 
 const app = express();
 
@@ -15,16 +15,20 @@ const dbFile = 'db.json';
 function jwtCheck(req, res, next) {
   if(process.env.NODE_ENV === 'production') {
     console.log("Auth Middleware fired.")
-    jwt({
-      secret: jwks.expressJwtSecret({
-        cache: true,
-        rateLimit: true,
-        jwksRequestsPerMinute: 5,
-        jwksUri: 'https://dev-7--1a-5y.us.auth0.com/.well-known/jwks.json'
-      }),
+    // jwt({
+    //   secret: jwks.expressJwtSecret({
+    //     cache: true,
+    //     rateLimit: true,
+    //     jwksRequestsPerMinute: 5,
+    //     jwksUri: 'https://dev-7--1a-5y.us.auth0.com/.well-known/jwks.json'
+    //   }),
+    //   audience: 'https://www.krondor.org/api/',
+    //   issuer: 'https://dev-7--1a-5y.us.auth0.com/',
+    //   algorithms: ['RS256']
+    // });
+    return auth({
       audience: 'https://www.krondor.org/api/',
-      issuer: 'https://dev-7--1a-5y.us.auth0.com/',
-      algorithms: ['RS256']
+      issuerBaseURL: `https://dev-7--1a-5y.us.auth0.com/`,
     });
   }
   next();
@@ -32,7 +36,7 @@ function jwtCheck(req, res, next) {
 
 function projectWriteCheck(req, res, next) {
   if(process.env.NODE_ENV === 'production') {
-    requiredScopes('write:projects');
+    return requiredScopes('write:projects');
   }
   next();
 }
