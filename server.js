@@ -1,7 +1,8 @@
 const express = require("express");
 const fs = require('fs');
 const bodyParser = require('body-parser')
-const enforce = require('express-sslify');
+const jwt = require('express-jwt');
+const jwks = require('jwks-rsa');
 
 const app = express();
 
@@ -9,6 +10,18 @@ const app = express();
 const path = require('path');
 const dir = path.join(__dirname, 'dist/krondor/');
 const dbFile = 'db.json';
+
+var jwtCheck = jwt({
+  secret: jwks.expressJwtSecret({
+    cache: true,
+    rateLimit: true,
+    jwksRequestsPerMinute: 5,
+    jwksUri: 'https://dev-7--1a-5y.us.auth0.com/.well-known/jwks.json'
+  }),
+  audience: 'https://www.krondor.org/api/',
+  issuer: 'https://dev-7--1a-5y.us.auth0.com/',
+  algorithms: ['RS256']
+});
 
 if(process.env.NODE_ENV === 'production') {
   console.log("Using forced SSL...")
@@ -21,6 +34,7 @@ if(process.env.NODE_ENV === 'production') {
     else
       next()
   })
+  app.use(jwtCheck);
 }
 
 //Try putting this last

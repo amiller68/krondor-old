@@ -40,6 +40,12 @@ import { LoginPageComponent } from './pages/login-page/login-page.component';
 //Auth module
 import { AuthModule } from "@auth0/auth0-angular";
 
+//Auth for APIs
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthHttpInterceptor } from '@auth0/auth0-angular';
+
+const dev_server_url = "https://krondor.org";
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -78,10 +84,18 @@ import { AuthModule } from "@auth0/auth0-angular";
     AuthModule.forRoot({
       domain: "dev-7--1a-5y.us.auth0.com",
       clientId: "GzISNA2vFZmZzP8sbZ6g0nKdhc5vNt0f",
-      redirect_uri: window.location.origin
+      redirect_uri: window.location.origin,
+      audience: 'https://www.krondor.org/api/',
+      httpInterceptor: {
+        allowedList: [`${dev_server_url}/api/projects`],
+      },
     }),
   ],
-  providers: [],
+  providers: [{
+    provide: HTTP_INTERCEPTORS,
+    useClass: AuthHttpInterceptor,
+    multi: true
+  }],
   bootstrap: [AppComponent]
 })
 //@ts-ignore
