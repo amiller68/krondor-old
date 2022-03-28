@@ -34,7 +34,15 @@ if(process.env.NODE_ENV === 'production') {
     else
       next()
   })
-  app.use(jwtCheck);
+  app.use((req, res, next) => {
+    console.log("Auth Middleware fired.")
+    if (req.method === "GET") {
+      console.log("Bypass auth: GET req");
+      next();
+    }
+    jwtCheck;
+    next();
+  });
 }
 
 //Try putting this last
