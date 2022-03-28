@@ -16,7 +16,7 @@ const jwtCheck = (req, res, next) => {
   try {
     if (process.env.NODE_ENV === 'production') {
       console.log("Auth Middleware firing.")
-      let authMiddlware = jwt({
+      jwt({
         secret: jwks.expressJwtSecret({
           cache: true,
           rateLimit: true,
@@ -27,13 +27,12 @@ const jwtCheck = (req, res, next) => {
         issuer: 'https://dev-7--1a-5y.us.auth0.com/',
         algorithms: ['RS256']
       });
-      return authMiddlware;
     } else {
       return next();
     }
   } catch(err)
   {
-    next(err);
+    console.log("Error validating token: ", err);
   }
 }
 
@@ -41,14 +40,13 @@ const projectWriteCheck = (req, res, next) => {
   try {
     if (process.env.NODE_ENV === 'production') {
       console.log("Role check Middleware firing.")
-      let projectCheckMiddleware = requiredScopes('write:projects');
-      return projectCheckMiddleware;
+      requiredScopes('write:projects');
     } else {
       return next();
     }
   } catch(err)
   {
-    next(err);
+    console.log("Error validating token: ", err);
   }
 }
 
