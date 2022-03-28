@@ -13,7 +13,7 @@ const dir = path.join(__dirname, 'dist/krondor/');
 const dbFile = 'db.json';
 const projectPermissions = 'write:projects';
 
-function jwtCheckMiddleWare(req, res, next) {
+function jwtCheck(req, res, next) {
   if(process.env.NODE_ENV === 'production') {
     console.log("Auth Middleware fired.")
     jwt({
@@ -38,11 +38,6 @@ function projectWriteCheck(req, res, next) {
   next();
 }
 
-const authMiddleWare = {
-  jwtCheckMiddleWare,
-  projectWriteCheck
-}
-
 // Enable the use of request body parsing middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -60,7 +55,7 @@ if(process.env.NODE_ENV === 'production') {
       res.redirect(`https://${req.header('host')}${req.url}`);
     }
     else
-      next()
+      next();
   })
 }
 
@@ -80,7 +75,7 @@ app.get('/api/projects',(req, res) => {
   });
 });
 
-app.post('/api/projects', authMiddleWare, (req, res) => {
+app.post('/api/projects', jwtCheck, projectWriteCheck, (req, res) => {
   // if (process.env.NODE_ENV === 'production')
   // {
   //   res.status(401)
@@ -113,7 +108,7 @@ app.post('/api/projects', authMiddleWare, (req, res) => {
   });
 });
 
-app.delete('/api/projects/:id', authMiddleWare, (req, res) => {
+app.delete('/api/projects/:id', jwtCheck, projectWriteCheck, (req, res) => {
   // if (process.env.NODE_ENV === 'production')
   // {
   //   res.status(401)
@@ -137,7 +132,7 @@ app.delete('/api/projects/:id', authMiddleWare, (req, res) => {
   });
 });
 
-app.put('/api/projects', authMiddleWare, (req, res) => {
+app.put('/api/projects', jwtCheck, projectWriteCheck, (req, res) => {
   // if (process.env.NODE_ENV === 'production')
   // {
   //   res.status(401)
