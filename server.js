@@ -27,7 +27,7 @@ function jwtCheckMiddleWare(req, res, next) {
   });
   //For now, only I should authenticate changes:
   console.log("Requesting user: ", req.user);
-  if (req.use === admin_email) {
+  if (req.user === admin_email) {
     next();
   }
 }
