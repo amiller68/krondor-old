@@ -19,17 +19,19 @@ function tokenLog(req, res, next) {
   next();
 }
 
-const jwtCheck = jwt({
-  secret: jwks.expressJwtSecret({
-    cache: true,
-    rateLimit: true,
-    jwksRequestsPerMinute: 5,
-    jwksUri: 'https://dev-7--1a-5y.us.auth0.com/.well-known/jwks.json'
-  }),
-  audience: 'https://www.krondor.org/api/',
-  issuer: 'https://dev-7--1a-5y.us.auth0.com/',
-  algorithms: ['RS256']
-});
+const jwtCheck = (req, res, next) => {
+  jwt({
+    secret: jwks.expressJwtSecret({
+      cache: true,
+      rateLimit: true,
+      jwksRequestsPerMinute: 5,
+      jwksUri: 'https://dev-7--1a-5y.us.auth0.com/.well-known/jwks.json'
+    }),
+    audience: 'https://www.krondor.org/api/',
+    issuer: 'https://dev-7--1a-5y.us.auth0.com/',
+    algorithms: ['RS256']
+  });
+}
 
 // const jwtCheck = (req, res, next) => {
 //   try {
