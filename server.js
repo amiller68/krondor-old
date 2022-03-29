@@ -12,9 +12,11 @@ const path = require('path');
 const dir = path.join(__dirname, 'dist/krondor/');
 const dbFile = 'db.json';
 
-function tokenCheck(req, res, next) {
-  const {token_type, access_token} = req.oidc.accessToken;
-  console.log('token type and access token : ',token_type, access_token)
+function tokenLog(req, res, next) {
+  // const {token_type, access_token} = req.oidc.accessToken;
+  // console.log('token type and access token : ',token_type, access_token)
+  console.log("Token log test.")
+  next();
 }
 
 const jwtCheck = jwt({
@@ -133,7 +135,7 @@ app.post('/api/projects', jwtCheck, projectWriteCheck, (req, res) => {
   });
 });
 
-app.delete('/api/projects/:id', tokenCheck, jwtCheck, projectWriteCheck, (req, res) => {
+app.delete('/api/projects/:id', tokenLog, jwtCheck, projectWriteCheck, (req, res) => {
   let id = req.params.id;
   console.log("Project deletion requested: ", id);
   fs.readFile(dbFile, 'utf-8',(err, data) => {
