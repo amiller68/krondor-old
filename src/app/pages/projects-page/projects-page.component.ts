@@ -1,4 +1,4 @@
-import {Component, OnInit, isDevMode } from '@angular/core';
+import {Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ProjectsService } from "../../api/services/projects/projects.service";
 import { Project, Tag, defaultProject } from "../../entities/projects";
@@ -37,7 +37,6 @@ export class ProjectsPageComponent implements OnInit {
   projectPanels: ProjectPanel[] = [];
   filteredProjectPanels: ProjectPanel[] = [];
   tagOptions: TagOption[] = [];
-  devMode = isDevMode()
 
   //Makes the HTML happy
   defaultProjectCopy: Project = defaultProject;
