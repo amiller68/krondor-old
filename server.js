@@ -1,9 +1,9 @@
 const express = require("express");
+require('dotenv').config({ path: `.env.${process.env.NODE_ENV}` })
 const fs = require('fs');
 const bodyParser = require('body-parser')
 const jwt = require('express-jwt');
 const jwks = require('jwks-rsa');
-// const { auth, requiredScopes } = require('express-oauth2-jwt-bearer');
 
 const app = express();
 
@@ -20,6 +20,7 @@ function tokenLog(req, res, next) {
 }
 
 const jwtCheck = (req, res, next) => {
+  console.log("Validating user token")
   jwt({
     secret: jwks.expressJwtSecret({
       cache: true,
@@ -193,9 +194,9 @@ app.get("/*", (req, res) => {
 app.listen(process.env.PORT || 3000, () => {
   console.log("Server listening", process.env.PORT || 3000,"!")
   if (process.env.NODE_ENV === 'production') {
-    console.log("Server running in production mode. Closed for requests.");
+    console.log("Server running in production mode.");
   }
   else {
-    console.log("Server running in development mode. Open for requests.")
+    console.log("Server running in development mode.")
   }
 });
