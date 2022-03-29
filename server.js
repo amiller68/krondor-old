@@ -31,7 +31,7 @@ const jwtCheck = (req, res, next) => {
     issuer: 'https://dev-7--1a-5y.us.auth0.com/',
     algorithms: ['RS256']
   });
-  next();
+  // next();
 }
 
 // const jwtCheck = (req, res, next) => {
