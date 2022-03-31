@@ -4,6 +4,9 @@ This code base describe my personal website http://www.krondor.org. Right now th
 
 If you want to help me make a cool website and place to share ideas, feel free to clone the repo, make a new branch, and submit a feature request through a functioning pull request. I hope to define a testing infrastructure in the near future in order to make this system more manageable and accessible.
 
+## Future Plans
+
+Right now this code base just describes the functioanlity of my website krondor.org, but I plan on forking the project and implementing a local projects manager once I am happy with the first draft of this site and its necessary infrastructure.
 
 ## Development server
 
@@ -15,7 +18,7 @@ Run `ng build --watch -c development` in order to build the project correctly, a
 When run in production mode, the interface doesn't give users the option to add or modify content; this is to stop people from messing with my content before I implement user authentication.
 In order to run the server properly when deployd, use `NODE_ENV=prouction node server.js`
 
-The way `server.js` is configured to run and deployed on Heroku, production builds won't run properly when being tested locally. in my development framework, Production implies the use of HTTPS, which isn't implemented natively, but through Heroku's load balancer.
+The way `server.js` is configured to run and deployed on Heroku, production builds won't run properly when being tested locally.
 ## Notes and Acknowledgments 
  - This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.1.2.
 
