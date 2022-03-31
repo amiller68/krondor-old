@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 const jwt = require('express-jwt');
 const jwks = require('jwks-rsa');
 var jwtAuthz = require('express-jwt-authz');
+// const GracefulShutdownManager = require('@moebius/http-graceful-shutdown').GracefulShutdownManager;
 
 const app = express();
 
@@ -174,4 +175,16 @@ app.listen(process.env.PORT || 3000, () => {
   else {
     console.log("Server running in development mode.")
   }
+});
+
+//Whenever you redeploy the project to heroku, this prints the db.json into logs
+//This is a placeholder until I can use a real database
+process.on('SIGTERM', () => {
+  // shutdownManager.terminate(() => {
+    console.log("Data Record:")
+
+    fs.readFile(dbFile, 'utf-8',(err, data) => {
+      console.log(data)
+    })
+  // });
 });
