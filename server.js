@@ -4,6 +4,7 @@ const fs = require('fs');
 const bodyParser = require('body-parser')
 const jwt = require('express-jwt');
 const jwks = require('jwks-rsa');
+var jwtAuthz = require('express-jwt-authz');
 
 const app = express();
 
@@ -13,66 +14,35 @@ const dir = path.join(__dirname, 'dist/krondor/');
 const dbFile = 'db.json';
 
 function tokenLog(req, res, next) {
-  // const {token_type, access_token} = req.oidc.accessToken;
-  // console.log('token type and access token : ',token_type, access_token)
-  console.log("Token log test.")
+  console.log("Token log:");
+  console.log(req.headers.authorization);
   next();
 }
 
-const jwtCheck = (req, res, next) => {
-  console.log("Validating user token")
-  jwt({
-    secret: jwks.expressJwtSecret({
-      cache: true,
-      rateLimit: true,
-      jwksRequestsPerMinute: 5,
-      jwksUri: 'https://dev-7--1a-5y.us.auth0.com/.well-known/jwks.json'
-    }),
-    audience: 'https://www.krondor.org/api/',
-    issuer: 'https://dev-7--1a-5y.us.auth0.com/',
-    algorithms: ['RS256']
-  });
-  // next();
-}
+const jwtCheck = jwt({
+  secret: jwks.expressJwtSecret({
+    cache: true,
+    rateLimit: true,
+    jwksRequestsPerMinute: 5,
+    jwksUri: 'https://dev-7--1a-5y.us.auth0.com/.well-known/jwks.json'
+  }),
+  audience: process.env.AUTH0_AUDIENCE,
+  issuer: process.env.AUTH0_DOMAIN,
+  algorithms: ['RS256']
+});
 
-// const jwtCheck = (req, res, next) => {
-//   try {
-//     if (process.env.NODE_ENV === 'production') {
-//       console.log("Auth Middleware firing.")
-//       jwt({
-//         secret: jwks.expressJwtSecret({
-//           cache: true,
-//           rateLimit: true,
-//           jwksRequestsPerMinute: 5,
-//           jwksUri: 'https://dev-7--1a-5y.us.auth0.com/.well-known/jwks.json'
-//         }),
-//         audience: 'https://www.krondor.org/api/',
-//         issuer: 'https://dev-7--1a-5y.us.auth0.com/',
-//         algorithms: ['RS256']
-//       });
-//     } else {
-//       return next();
-//     }
-//   } catch(err)
-//   {
-//     next(err)
-//   }
-// }
+const projectWriteCheck = jwtAuthz(['write:projects'], {
+  failWithError: true,
+});
 
-const projectWriteCheck = (req, res, next) => {
-  console.log("Got to write check");
-  next();
-  // try {
-  //   if (process.env.NODE_ENV === 'production') {
-  //     console.log("Role check Middleware firing.")
-  //     requiredScopes('write:projects');
-  //   } else {
-  //     return next();
-  //   }
-  // } catch(err)
-  // {
-  //   next(err)
-  // }
+const authError = (err, req, res, next) => {
+  if (err) {
+    console.log(err)
+    res.sendStatus(401);
+  }
+  else {
+    next()
+  }
 }
 
 // Enable the use of request body parsing middleware
@@ -112,7 +82,12 @@ app.get('/api/projects',(req, res) => {
   });
 });
 
-app.post('/api/projects', jwtCheck, projectWriteCheck, (req, res) => {
+app.get('/api/projects/write_privileges', jwtAuthz, authError, (req, res) => {
+  console.log("Write status requested")
+  res.sendStatus(200);
+})
+
+app.post('/api/projects', tokenLog, jwtCheck, projectWriteCheck, authError, (req, res) => {
   let newProject = req.body;
   console.log("Project Added: ", req.body.id);
   fs.readFile(dbFile, 'utf-8',(err, data) => {
@@ -157,7 +132,7 @@ app.delete('/api/projects/:id', tokenLog, jwtCheck, projectWriteCheck, (req, res
   });
 });
 
-app.put('/api/projects', jwtCheck, projectWriteCheck, (req, res) => {
+app.put('/api/projects', tokenLog, jwtCheck, projectWriteCheck, (req, res) => {
   let updatedProject = req.body;
   console.log("Project updated: ", req.body.id);
   fs.readFile(dbFile, 'utf-8',(err, data) => {

@@ -1,50 +1,47 @@
 //Angular Modules
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import {NgModule} from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {CommonModule} from "@angular/common";
 
 //App Modules
-import { AppRoutingModule } from './app-routing.module';
+import {AppRoutingModule} from './app-routing.module';
 import {AppComponent, AuthButtonComponent} from './app.component';
 
 //Angular Materials
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatButtonModule } from '@angular/material/button';
-import { MatSidenavModule } from "@angular/material/sidenav";
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu'
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { HttpClientModule } from '@angular/common/http';
-import { MatCardModule } from "@angular/material/card";
-import { MatDialogModule } from "@angular/material/dialog";
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatSelectModule } from "@angular/material/select";
-import { MatTooltipModule } from "@angular/material/tooltip";
-import { MatTableModule } from "@angular/material/table";
+import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatButtonModule} from '@angular/material/button';
+import {MatSidenavModule} from "@angular/material/sidenav";
+import {MatIconModule} from '@angular/material/icon';
+import {MatMenuModule} from '@angular/material/menu'
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+//Auth for APIs
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import {MatCardModule} from "@angular/material/card";
+import {MatDialogModule} from "@angular/material/dialog";
+import {MatExpansionModule} from '@angular/material/expansion';
+import {MatDividerModule} from '@angular/material/divider';
+import {MatSelectModule} from "@angular/material/select";
+import {MatTooltipModule} from "@angular/material/tooltip";
+import {MatTableModule} from "@angular/material/table";
 
 //Markdown Module
-import { LMarkdownEditorModule } from 'ngx-markdown-editor';
+import {LMarkdownEditorModule} from 'ngx-markdown-editor';
 
 //App Components
-import { FrontPageComponent } from './pages/front-page/front-page.component';
-import { ProjectsPageComponent } from "./pages/projects-page/projects-page.component";
-import { PhotosPageComponent } from './pages/photos-page/photos-page.component';
+import {FrontPageComponent} from './pages/front-page/front-page.component';
+import {ProjectsPageComponent} from "./pages/projects-page/projects-page.component";
+import {PhotosPageComponent} from './pages/photos-page/photos-page.component';
 import {AboutPageComponent} from "./pages/about-page/about-page.component";
-import { ProjectEditorComponent } from './pages/project-editor/project-editor.component';
+import {ProjectEditorComponent} from './pages/project-editor/project-editor.component';
 import {ErrorPageComponent} from "./pages/error-page/error-page.component";
-import { LoginPageComponent } from './pages/login-page/login-page.component';
+import {LoginPageComponent} from './pages/login-page/login-page.component';
 
 //Auth module
-import { AuthModule } from "@auth0/auth0-angular";
+import {AuthHttpInterceptor, AuthModule} from "@auth0/auth0-angular";
 
-//Auth for APIs
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { AuthHttpInterceptor } from '@auth0/auth0-angular';
-
-const dev_server_url = "https://krondor.org";
+import {environment as env} from '../environments/environment'
 
 @NgModule({
   declarations: [
@@ -82,12 +79,15 @@ const dev_server_url = "https://krondor.org";
     MatTableModule,
 
     AuthModule.forRoot({
-      domain: "dev-7--1a-5y.us.auth0.com",
-      clientId: "GzISNA2vFZmZzP8sbZ6g0nKdhc5vNt0f",
-      redirect_uri: window.location.origin,
-      audience: 'https://www.krondor.org/api/',
+      ...env.auth,
+      scope: 'write:projects',
       httpInterceptor: {
-        allowedList: [`${dev_server_url}/api/projects`],
+        allowedList: [
+          {
+            uri: env.apiEndpoint + '*',
+            allowAnonymous: true
+          }
+        ]
       },
     }),
   ],

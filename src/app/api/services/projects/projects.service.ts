@@ -70,6 +70,15 @@ export class ProjectsService {
       );
   }
 
+  getWritePrivileges(): Observable<boolean> {
+    return this.http.get(this.projectsUrl + '/write_privileges', this.httpOptions)
+      .pipe(
+      map((): boolean => {
+        return true;
+      }),
+      catchError(this.handleError('updateProject', false)))
+  }
+
   addProject(project: Project): Observable<Project> {
     //Before we submit a new project, need to format it properly
     let data: any = {...project};

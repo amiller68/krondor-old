@@ -37,6 +37,7 @@ export class ProjectsPageComponent implements OnInit {
   projectPanels: ProjectPanel[] = [];
   filteredProjectPanels: ProjectPanel[] = [];
   tagOptions: TagOption[] = [];
+  isAdmin: boolean = false;
 
   //Makes the HTML happy
   defaultProjectCopy: Project = defaultProject;
@@ -59,6 +60,14 @@ export class ProjectsPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.getProjects()
+    // this.getWritePrivileges()
+  }
+
+  getWritePrivileges(): void {
+    this.projectService.getWritePrivileges()
+      .subscribe((r) => {
+      this.isAdmin = r;
+    });
   }
 
   getProjects(): void {
