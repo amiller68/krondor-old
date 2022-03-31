@@ -6,5 +6,5 @@ export const environment = {
     redirect_uri: window.location.origin,
     audience: 'https://www.krondor.org/api/',
   },
-  apiEndpoint: 'http://www.krondor.org/api/'
+  apiEndpoint: 'https://www.krondor.org/api/'
 };
