@@ -28,7 +28,7 @@
     <mat-toolbar class="toolbar">
       <span>projects.</span>
       <span class="spacer"></span>
-      <button mat-button class='toolbar-button' *ngIf="(auth.isAuthenticated$ | async)"
+      <button mat-button class='toolbar-button' *ngIf="isAdmin | async"
               aria-label="Add proejct"
               (click)="openProjectEditor({project: defaultProjectCopy, tags: getTags(), action: 'Add'})">
         <mat-icon>add</mat-icon>
@@ -63,7 +63,7 @@
                    [options]="options"
                    [(ngModel)]="p.project.description">
         </md-editor>
-        <div class="change-content-buttons" *ngIf="(auth.isAuthenticated$ | async)">
+        <div class="change-content-buttons" *ngIf="isAdmin | async">
           <button (click)="openProjectEditor({project: p.project, tags: getTags(), action: 'Edit'})">
             Edit
           </button>

@@ -33,6 +33,10 @@ export type dbResponse = {
   tags: any
 }
 
+export interface privilegeResponse {
+  privileges: boolean
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -73,17 +77,16 @@ export class ProjectsService {
   getWritePrivileges(): Observable<boolean> {
     return this.http.get(this.projectsUrl + '/write_privileges', this.httpOptions)
       .pipe(
-      map((): boolean => {
-        return true;
+      map((resp): boolean => {
+        return (resp as privilegeResponse).privileges;
       }),
-      catchError(this.handleError('updateProject', false)))
+      catchError(this.handleError('getWritePrivileges', false)))
   }
 
   addProject(project: Project): Observable<Project> {
     //Before we submit a new project, need to format it properly
     let data: any = {...project};
-    let id = uuid.v4();
-    data.id  = id;
+    data.id  = uuid.v4();
     data.startDate = moment(project.startDate).format('MMDDYYYY');
     if (project.endDate !== undefined) {
       data.endDate = moment(project.endDate).format('MMDDYYYY');

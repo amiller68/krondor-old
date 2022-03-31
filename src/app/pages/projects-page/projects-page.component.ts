@@ -7,6 +7,7 @@ import {TooltipPosition} from "@angular/material/tooltip";
 import { ProjectEditorComponent } from "../project-editor/project-editor.component";
 import { MdEditorOption } from "ngx-markdown-editor";
 import { AuthService } from "@auth0/auth0-angular";
+import {Observable} from "rxjs";
 
 export interface ProjectPanel {
   project: Project,
@@ -37,8 +38,8 @@ export class ProjectsPageComponent implements OnInit {
   projectPanels: ProjectPanel[] = [];
   filteredProjectPanels: ProjectPanel[] = [];
   tagOptions: TagOption[] = [];
-  isAdmin: boolean = false;
-
+  //@ts-ignore
+  isAdmin: Observable<boolean>;
   //Makes the HTML happy
   defaultProjectCopy: Project = defaultProject;
 
@@ -56,18 +57,16 @@ export class ProjectsPageComponent implements OnInit {
     private projectService: ProjectsService,
     private dialog: MatDialog,
     public auth: AuthService
-  ) { }
+  ) {
+    this.getWritePrivileges()
+  }
 
   ngOnInit(): void {
     this.getProjects()
-    // this.getWritePrivileges()
   }
 
   getWritePrivileges(): void {
-    this.projectService.getWritePrivileges()
-      .subscribe((r) => {
-      this.isAdmin = r;
-    });
+    this.isAdmin = this.projectService.getWritePrivileges()
   }
 
   getProjects(): void {

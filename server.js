@@ -83,10 +83,26 @@ app.get('/api/projects',(req, res) => {
   });
 });
 
-app.get('/api/projects/write_privileges', jwtAuthz, authError, (req, res) => {
-  console.log("Write status requested")
-  res.sendStatus(200);
-})
+app.get('/api/projects/write_privileges', jwtCheck, projectWriteCheck, (err, req, res, next) => {
+  //Middle ware for returning responses to unauthorized clients
+  if(err) {
+    console.log("Write status denied")
+    res.json(
+      {
+        "privileges": false
+      }
+    );
+  } else {
+    next();
+  }
+}, (req, res) => {
+  console.log("Write status approved")
+  res.json(
+    {
+      "privileges": true
+    }
+  )
+});
 
 app.post('/api/projects', tokenLog, jwtCheck, projectWriteCheck, authError, (req, res) => {
   let newProject = req.body;
@@ -180,11 +196,8 @@ app.listen(process.env.PORT || 3000, () => {
 //Whenever you redeploy the project to heroku, this prints the db.json into logs
 //This is a placeholder until I can use a real database
 process.on('SIGTERM', () => {
-  // shutdownManager.terminate(() => {
     console.log("Data Record:")
-
     fs.readFile(dbFile, 'utf-8',(err, data) => {
       console.log(data)
     })
-  // });
 });
