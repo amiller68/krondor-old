@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {Project, Tag, defaultProject, defaultTag} from '../../../entities/projects';
+import {Project, defaultProject} from '../../../entities/projects';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {catchError, map, Observable, of, tap} from "rxjs";
 import * as moment from "moment";
@@ -7,7 +7,7 @@ import * as _ from "underscore";
 import * as uuid from 'uuid';
 import { environment as env } from '../../../../environments/environment'
 
-export type serverProject = Omit<Project, 'id'>;
+export type serverProject = Omit<Project, '_id'>;
 
 export interface serverProjectEntry {
   [id: string]: serverProject
@@ -15,7 +15,7 @@ export interface serverProjectEntry {
 
 export function projectToServerProjectEntry(project: Project) {
   let ret: serverProjectEntry = {}
-  ret[project.id] = {
+  ret[project._id] = {
     startDate: project.startDate,
     endDate: project.endDate,
     title: project.title,
@@ -62,7 +62,7 @@ export class ProjectsService {
   addProject(project: Project): Observable<Project> {
     //Before we submit a new project, need to format it properly
     let data: any = {...project};
-    data.id = uuid.v4();
+    data._id = uuid.v4();
     data.startDate = moment(project.startDate).format('MMDDYYYY');
     if (project.endDate !== undefined) {
       data.endDate = moment(project.endDate).format('MMDDYYYY');
@@ -106,16 +106,16 @@ export class ProjectsService {
   }
 
   extractProjects(respObj: any): Project[] {
-    return _.map(Object.entries(respObj), ([id, data]) => {
-      return this.extractProject(id, data)
+    return _.map(respObj, (data) => {
+      return this.extractProject(data)
     })
   }
 
-  extractProject(id: string, data: any): Project {
+  extractProject(data: any): Project {
     let start_date = moment(data.startDate, "MMDDYYYY").toDate();
     let end_date = data.endDate === '' ? undefined : moment(data.endDate, "MMDDYYYY").toDate()
     return {
-      id: id,
+      _id: data._id,
       startDate: start_date,
       endDate: end_date,
       title: data.title,

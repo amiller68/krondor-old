@@ -64,7 +64,7 @@ export class ProjectEditorComponent implements OnInit {
   getTagColor(tagId: string) {
     //Error Check
     let tags = this.localTags
-    let tag = _.findWhere(tags, {id: tagId});
+    let tag = _.findWhere(tags, {_id: tagId});
     if (tag) {
       return "rgb(" + tag.color + ")";
     }

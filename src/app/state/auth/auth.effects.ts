@@ -37,7 +37,7 @@ export class AuthEffects {
     mergeMap(() => this.appAuthService.getApiWritePrivileges()
       .pipe(
         tap((privilege) => console.log("Can Write to API: ", privilege)),
-        map((privilege) => ({ type: '[Auth API] Update Write Privilege', privilege: true})),
+        map((privilege) => ({ type: '[Auth API] Update Write Privilege', privilege: privilege})),
       )
     ))
   );

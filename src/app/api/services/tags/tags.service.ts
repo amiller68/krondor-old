@@ -4,7 +4,6 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {catchError, map, Observable, of} from "rxjs";
 import * as _ from "underscore";
 //Keeping this for when I start adding tags
-import * as uuid from 'uuid';
 import { environment as env } from '../../../../environments/environment'
 
 @Injectable({
@@ -46,14 +45,14 @@ export class TagsService {
   }
 
   extractTags(respObj: any): Tag[] {
-    return  _.map(Object.entries(respObj), ([id, data]) => {
-      return this.extractTag(id, data);
+    return  _.map(respObj, (data) => {
+      return this.extractTag(data);
     })
   }
 
-  extractTag(id: string, data: any): Tag {
+  extractTag(data: any): Tag {
     return {
-      id: id,
+      _id: data._id,
       name: data.name,
       color: data.color
     }

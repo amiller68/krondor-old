@@ -71,8 +71,12 @@ export const updateProjectError = createAction(
 //Projects-Page Actions
 
 //Add to this action as we develop project search
-export const updateSelectedTags = (createAction(
+export const updateSelectedTags = createAction(
   '[Projects Page] Update Selected Tags',
   props<{tag_id: Readonly<string> }>()
-))
+)
 
+export const updateLoadingStatus = createAction(
+  '[Projects Page] Update Loading Status',
+  props<{loading_status: Readonly<boolean> }>()
+)

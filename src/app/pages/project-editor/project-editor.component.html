@@ -20,7 +20,7 @@
     <mat-form-field appearance="fill" *ngIf="localTags">
       <mat-label>Tags</mat-label>
       <mat-select [(ngModel)]="localProject.tags" multiple>
-        <mat-option class="tag-selector" *ngFor="let t of localTags" [value]="t.id">
+        <mat-option class="tag-selector" *ngFor="let t of localTags" [value]="t._id">
           {{t.name}}
         </mat-option>
       </mat-select>

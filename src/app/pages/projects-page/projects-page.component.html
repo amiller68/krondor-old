@@ -7,11 +7,11 @@
             <li *ngFor="let t of tags$ | async">
               <input
                 type="checkbox"
-                id="{{t.id}}"
-                (change)="updateTags(t.id)">
-              <label for="{{t.id}}">
+                id="{{t._id}}"
+                (change)="updateTags(t._id)">
+              <label for="{{t._id}}">
                 {{t.name}}
-                <mat-icon [ngStyle]="{'color': getTagColor(t.id)}">
+                <mat-icon [ngStyle]="{'color': getTagColor(t._id)}">
                   circle
                 </mat-icon>
               </label>
@@ -24,53 +24,56 @@
     </ul>
   </aside>
   <main>
-    <mat-toolbar class="toolbar">
-      <span>projects.</span>
-      <span class="spacer"></span>
-      <button mat-button class='toolbar-button' *ngIf="isAdmin$ | async"
-              aria-label="Add project"
-              (click)="openProjectEditor({project: defaultProjectCopy, tags: getTags(), action: 'Add'})">
-        <mat-icon>add</mat-icon>
-      </button>
-    </mat-toolbar>
-    <hr>
-    <p>Take a look at what I've been up to</p>
-    <mat-accordion>
-      <mat-expansion-panel *ngFor="let p of projectPanels$ | async"
-                           hideToggle
-                           (opened)="p.opened = true"
-                           (closed)="p.opened = false">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            <span>{{p.project.title}}</span>
-          </mat-panel-title>
-          <mat-panel-description>
-            <div class="project-tag-icons">
+    <div class="container" *ngIf="!(pageLoaded$ | async); else loaded">
+      <mat-spinner></mat-spinner>
+    </div>
+
+    <ng-template #loaded>
+      <mat-toolbar class="toolbar">
+        <span>projects.</span>
+        <span class="spacer"></span>
+        <button mat-button class='toolbar-button' *ngIf="isAdmin$ | async"
+                aria-label="Add project"
+                (click)="openProjectEditor({project: defaultProjectCopy, tags: getTags(), action: 'Add'})">
+          <mat-icon>add</mat-icon>
+        </button>
+      </mat-toolbar>
+      <hr>
+      <p>Take a look at what I've been up to</p>
+      <mat-accordion>
+        <mat-expansion-panel *ngFor="let p of projectPanels$ | async"
+                             hideToggle
+                             (opened)="setOpened(p)"
+                             (closed)="p.opened = false">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <span>{{p.project.title}}</span>
+            </mat-panel-title>
+            <span class="spacer"> </span>
               <mat-icon *ngFor="let t of p.project.tags"
                         [ngStyle]="{'color': getTagColor(t), 'float': 'right'}"
                         matTooltip="getTagName(t)"
                         [matTooltipPosition]="tagToolTipPosition">
                 circle
               </mat-icon>
-            </div>
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-        <!--This renders the project description in Markdown-->
-        <md-editor name="Content"
-                   [height]="'400px'"
-                   [mode]="'preview'"
-                   [options]="options"
-                   [(ngModel)]="p.project.description">
-        </md-editor>
-        <div class="change-content-buttons" *ngIf="isAdmin$ | async">
-          <button (click)="openProjectEditor({project: p.project, tags: getTags(), action: 'Edit'})">
-            Edit
-          </button>
-          <button (click)="openProjectEditor({project: p.project, tags: getTags(), action: 'Delete'})">
-            Delete
-          </button>
-        </div>
-      </mat-expansion-panel>
-    </mat-accordion>
+          </mat-expansion-panel-header>
+          <!--This renders the project description in Markdown-->
+          <md-editor name="Content"
+                     [height]="'400px'"
+                     [mode]="'preview'"
+                     [options]="options"
+                     [(ngModel)]="p.project.description">
+          </md-editor>
+          <div class="change-content-buttons" *ngIf="isAdmin$ | async">
+            <button (click)="openProjectEditor({project: p.project, tags: getTags(), action: 'Edit'})">
+              Edit
+            </button>
+            <button (click)="openProjectEditor({project: p.project, tags: getTags(), action: 'Delete'})">
+              Delete
+            </button>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </ng-template>
   </main>
 </body>

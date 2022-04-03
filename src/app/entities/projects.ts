@@ -1,5 +1,5 @@
 export type Project = {
-  id: string,
+  _id: string,
   startDate: Date,
   endDate: Date | undefined,
   title: string,
@@ -9,13 +9,13 @@ export type Project = {
 };
 
 export type Tag = {
-  id: string,
+  _id: string,
   name: string,
   color: string
 }
 
 export const defaultProject: Project = {
-  id: '',
+  _id: '',
   startDate: new Date(),
   endDate: undefined,
   title: 'Project Title',
@@ -25,11 +25,12 @@ export const defaultProject: Project = {
 }
 
 export const defaultTag: Tag = {
-  id: 'tag_id',
+  _id: 'tag_id',
   name: 'defaultTag',
   color: '0,0,0'
 }
 
 export interface ProjectSelection {
-  tag_ids: string[]
+  tag_ids: string[],
+  is_loaded: boolean
 }

@@ -22,3 +22,11 @@ export const selectFocusedProjects = createSelector(
     return filteredProjects
   }
 )
+
+export const selectProjectsLoaded = createSelector(
+  selectProjectPageState,
+  (projectsPageState) => {
+    console.log("Selecting Projects...")
+    return projectsPageState.is_loaded
+  }
+)

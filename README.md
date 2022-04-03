@@ -4,15 +4,27 @@ This code base describe my personal website http://www.krondor.org. Right now th
 
 If you want to help me make a cool website and place to share ideas, feel free to clone the repo, make a new branch, and submit a feature request through a functioning pull request. I hope to define a testing infrastructure in the near future in order to make this system more manageable and accessible.
 
+## Tech Stack
+
+- The code base was built using the Angular Framework
+- The server hosting its content is written in Node.js; it's an express server
+- The compiled source code is then hosted by Heroku, which both:
+  - deploys it using its integration with GitHub
+  - and encrypts server traffic over SSL (I had to spring for the Hobbyist Version in order to do this)
+- The Auth Service is provided by Auth0
+- And the data hosting is implemented using MongoDB
+
 ## Future Plans
 
-Right now this code base just describes the functioanlity of my website krondor.org, but I plan on forking the project and implementing a local projects manager once I am happy with the first draft of this site and its necessary infrastructure.
+- Port over to AWS
+- add more content
 
 ## Development server
 
 Currently, you can only add content to the site when running the project in development mode, in conjunction with server.js. 
 Run `ng build --watch -c development` in order to build the project correctly, and `node server.js` in order to be able to handle content-change requests from the interface.
 
+You will need to provide your own MongoDb Endpoint in order to test this locally. Input your server url into a file called `mongodb.uri` in the top level directory.
 ## Production deployment
 
 When run in production mode, the interface doesn't give users the option to add or modify content; this is to stop people from messing with my content before I implement user authentication.

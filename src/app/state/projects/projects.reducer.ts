@@ -6,7 +6,7 @@ import {
   deleteProjectError,
   deleteProjectSuccess,
   loadProjectsError,
-  loadProjectsSuccess,
+  loadProjectsSuccess, updateLoadingStatus,
   updateProjectError,
   updateProjectSuccess, updateSelectedTags
 } from './projects.actions';
@@ -16,7 +16,8 @@ import * as _ from 'underscore'
 export const projectsApiInitialState: ReadonlyArray<Project>= []
 //@todo: figure out best practices for refactoring this
 export const projectsPageInitialState: Readonly<ProjectSelection> = {
-  tag_ids: []
+  tag_ids: [],
+  is_loaded: true
 }
 
 //@todo: Implement Error Handling
@@ -30,7 +31,7 @@ export const projectsApiReducer = createReducer(
 
   // Receive Add Project Responses
   on(addProjectSuccess, (state, { project }) => {
-    if (_.findWhere(state, {id: project.id}) !== undefined) return state;
+    if (_.findWhere(state, {_id: project._id}) !== undefined) return state;
       return [
         ...state, project
       ]
@@ -43,10 +44,10 @@ export const projectsApiReducer = createReducer(
 
   //Receive Load Project Responses
   on(updateProjectSuccess, (state, { project }) => {
-    if (_.findWhere(state, {id: project.id}) !== undefined) return state;
+    if (_.findWhere(state, {_id: project._id}) !== undefined) return state;
     // Update state
     return _.map(state, (p) => {
-      if (p.id === project.id) {
+      if (p._id === project._id) {
         return project
       }
       return p
@@ -59,9 +60,9 @@ export const projectsApiReducer = createReducer(
 
   //Receive Delete Project Responses
   on(deleteProjectSuccess, (state, { id }) => {
-    if (_.findWhere(state, {id: id}) === undefined) return state;
+    if (_.findWhere(state, {_id: id}) === undefined) return state;
     // Update state
-    return state.filter((p) => p.id !== id);
+    return state.filter((p) => p._id !== id);
   }),
 
   on(deleteProjectError, (state) => {
@@ -84,6 +85,14 @@ export const projectsPageReducer = createReducer(
     return{
       ...state,
       tag_ids: state.tag_ids.filter(id => id !== tag_id)
+    }
+  }),
+
+  on(updateLoadingStatus, (state, {loading_status}) => {
+    console.log("Updating Load Status: ", loading_status)
+    return {
+      ...state,
+      is_loaded: loading_status
     }
   })
 )

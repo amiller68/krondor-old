@@ -47,3 +47,5 @@ Thumbs.db
 
 # Don't want to overwrite any deployed data
 db.json
+
+mongo.uri

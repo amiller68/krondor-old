@@ -1,4 +1,4 @@
-import {Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ProjectsService } from "../../api/services/projects/projects.service";
 import { TagsService } from "../../api/services/tags/tags.service";
@@ -8,9 +8,9 @@ import {TooltipPosition} from "@angular/material/tooltip";
 import { ProjectEditorComponent } from "../project-editor/project-editor.component";
 import { MdEditorOption } from "ngx-markdown-editor";
 import { AuthService } from "@auth0/auth0-angular";
-import {map, Observable, of, tap} from "rxjs";
+import {Observable, of} from "rxjs";
 import {Store} from '@ngrx/store';
-import {selectFocusedProjects, selectProjects} from "../../state/projects/projects.selector";
+import {selectFocusedProjects, selectProjectsLoaded} from "../../state/projects/projects.selector";
 import {selectTags} from "../../state/tags/tags.selector";
 import {mergeMap} from "rxjs/operators";
 import {selectApiWritePrivilege} from "../../state/auth/auth.selector";
@@ -40,8 +40,19 @@ export class ProjectsPageComponent implements OnInit {
 
   //Pipe the projects and tags through the interface we need for out Frontend
   projectPanels$: Observable<ProjectPanel[]> = this.store.select(selectFocusedProjects).pipe(
-    mergeMap( (projects) => this.getProjectPanelsData(projects))
+    mergeMap( (projects) => of(
+      _.map(projects, (p): ProjectPanel => {
+        return {
+          project: p,
+          opened: false
+        }
+      })
+    ))
   )
+
+  pageLoaded$: Observable<boolean> = this.store.select(selectProjectsLoaded);
+
+  focusedPanel: ProjectPanel | undefined = undefined;
 
   isAdmin$ = this.store.select(selectApiWritePrivilege);
 
@@ -71,17 +82,8 @@ export class ProjectsPageComponent implements OnInit {
   ngOnInit(): void {
     this.store.dispatch({ type: '[Projects API] Load Projects' });
     this.store.dispatch({ type: '[Tags API] Load Tags' });
-  }
 
-  getProjectPanelsData = (projects: readonly Project[]): Observable<ProjectPanel[]> => {
-    return of(
-      _.map(projects, (p): ProjectPanel => {
-        return {
-          project: p,
-          opened: false
-        }
-      })
-    )
+    this.store.dispatch({type: '[Auth API] Check Write Privilege'});
   }
 
   //Opens the dialog panel for creating a new project
@@ -101,7 +103,7 @@ export class ProjectsPageComponent implements OnInit {
         this.updateProject(result.data);
       }
       else if(result.event == 'Delete'){
-        this.deleteProject(result.data.id);
+        this.deleteProject(result.data._id);
       }
       else if(result.event !== 'Cancel'){
         console.log("[ERROR] Unhandled action from dialog")
@@ -110,7 +112,7 @@ export class ProjectsPageComponent implements OnInit {
   }
 
   getTagColor(tagId: string) {
-    let tag = _.findWhere(this.getTags(), {id: tagId});
+    let tag = _.findWhere(this.getTags(), {_id: tagId});
     if (tag) {
       return "rgb(" + tag.color + ")";
     }
@@ -120,7 +122,7 @@ export class ProjectsPageComponent implements OnInit {
 
   //@todo: Make this work with out ToolTips!
   getTagName(tagId: string) {
-    let tag = _.findWhere(this.getTags(), {id: tagId});
+    let tag = _.findWhere(this.getTags(), {_id: tagId});
     if (tag) {
       return tag.name;
     }
@@ -149,5 +151,11 @@ export class ProjectsPageComponent implements OnInit {
     let tags: ReadonlyArray<Tag> = [];
     this.tags$.subscribe(ts => tags = ts)
     return tags
+  }
+
+  setOpened(p: ProjectPanel) {
+    // p.opened = true;
+    // this.focusedPanel = p;
+    return p.opened;
   }
 }

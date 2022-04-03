@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import {EMPTY, of, switchMap, tap} from 'rxjs';
+import {of, tap} from 'rxjs';
 import { map, mergeMap, catchError } from 'rxjs/operators';
 import {ProjectsService} from "../../api/services/projects/projects.service";
 import {defaultProject} from "../../entities/projects";
-import {create} from "underscore";
 
 @Injectable()
 export class ProjectEffects {
@@ -20,6 +19,13 @@ export class ProjectEffects {
       )
     ))
   );
+
+  //@todo: Implement proper Error state handling
+  onLoadProjectsSuccess$ = createEffect(() => this.actions$.pipe(
+    ofType('[Projects API] Load Projects Success'),
+    tap(()=> console.log("Projects loaded!")),
+    map((_) => ({ type: '[Projects Page] Update Loading Status', loading_status: true }))
+  ));
 
   addProject$ = createEffect(() => this.actions$.pipe(
     ofType('[Projects API] Add Project'),
