@@ -5,8 +5,7 @@ import {catchError, map, Observable, of, tap} from "rxjs";
 import * as moment from "moment";
 import * as _ from "underscore";
 import * as uuid from 'uuid';
-
-const deployedHostname: string = 'www.krondor.org';
+import { environment as env } from '../../../../environments/environment'
 
 export type serverProject = Omit<Project, 'id'>;
 
@@ -27,26 +26,11 @@ export function projectToServerProjectEntry(project: Project) {
   return ret;
 }
 
-//@todo: type this more strongly
-export type dbResponse = {
-  projects: any,
-  tags: any
-}
-
-export interface privilegeResponse {
-  privileges: boolean
-}
-
 @Injectable({
   providedIn: 'root'
 })
 export class ProjectsService {
-  //@todo: Upgrade to HTTPSnpm install express-sslify --save
-  private deployedProjectsUrl = 'https://www.krondor.org/api/projects';  // URL to deployed web api
-  private developmentProjectsUrl = 'http://localhost:3000/api/projects';  // URL to development web api
-  private projectsUrl = window.location.hostname === deployedHostname ?
-    this.deployedProjectsUrl : this.developmentProjectsUrl;
-
+  private projectsUrl = env.apiEndpoint + "projects"
 
   httpOptions = {
     headers: new HttpHeaders({
@@ -56,42 +40,33 @@ export class ProjectsService {
     })
   };
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+  }
 
-  getProjectsAndTags(): Observable<[Project[], Tag[]]> {
+  getProjects(): Observable<Project[]> {
     return this.http.get<Project[]>(this.projectsUrl, this.httpOptions)
       .pipe(
-        map((resp): [Project[], Tag[]] =>
+        map((resp): Project[] =>
           //@ts-ignore
-          this.extractProjectsAndTags(resp)
+          this.extractProjects(resp)
         ),
         catchError(
-          this.handleError<[Project[], Tag[]]>(
+          this.handleError<Project[]>(
             'getProjectsAndTags',
-            [[defaultProject],[defaultTag]]
+            [defaultProject]
           )
         )
       );
   }
 
-  getWritePrivileges(): Observable<boolean> {
-    return this.http.get(this.projectsUrl + '/write_privileges', this.httpOptions)
-      .pipe(
-      map((resp): boolean => {
-        return (resp as privilegeResponse).privileges;
-      }),
-      catchError(this.handleError('getWritePrivileges', false)))
-  }
-
   addProject(project: Project): Observable<Project> {
     //Before we submit a new project, need to format it properly
     let data: any = {...project};
-    data.id  = uuid.v4();
+    data.id = uuid.v4();
     data.startDate = moment(project.startDate).format('MMDDYYYY');
     if (project.endDate !== undefined) {
       data.endDate = moment(project.endDate).format('MMDDYYYY');
-    }
-    else {
+    } else {
       data.endDate = '';
     }
     return this.http.post<Project>(this.projectsUrl, data, this.httpOptions)
@@ -104,11 +79,12 @@ export class ProjectsService {
       );
   }
 
-  deleteProject(id: string): Observable<unknown> {
+  deleteProject(id: string): Observable<string> {
     const url = `${this.projectsUrl}/${id}`;
     return this.http.delete(url, this.httpOptions)
       .pipe(
-        catchError(this.handleError('deleteProject'))
+        map((): string => id),
+        catchError(this.handleError<string>('deleteProject', ''))
       );
   }
 
@@ -122,22 +98,17 @@ export class ProjectsService {
       );
   }
 
-
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
-      console.log("Error occurred during", operation,": ", error)
+      console.log("Error occurred during", operation, ": ", error)
       return of(result as T);
     };
   }
 
-  extractProjectsAndTags(resp: dbResponse): [Project[], Tag[]] {
-    let projects = _.map(Object.entries(resp.projects),([id, data]) => {
+  extractProjects(respObj: any): Project[] {
+    return _.map(Object.entries(respObj), ([id, data]) => {
       return this.extractProject(id, data)
     })
-    let tags = _.map(Object.entries(resp.tags), ([id, data]) => {
-      return this.extractTag(id, data);
-    })
-    return [projects, tags]
   }
 
   extractProject(id: string, data: any): Project {
@@ -151,14 +122,6 @@ export class ProjectsService {
       description: data.description,
       platform: data.platform,
       tags: data.tags
-    }
-  }
-
-  extractTag(id: string, data: any): Tag {
-    return {
-      id: id,
-      name: data.name,
-      color: data.color
     }
   }
 }

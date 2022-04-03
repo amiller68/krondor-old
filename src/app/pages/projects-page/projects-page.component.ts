@@ -1,27 +1,28 @@
 import {Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ProjectsService } from "../../api/services/projects/projects.service";
+import { TagsService } from "../../api/services/tags/tags.service";
 import { Project, Tag, defaultProject } from "../../entities/projects";
 import * as _ from 'underscore';
 import {TooltipPosition} from "@angular/material/tooltip";
 import { ProjectEditorComponent } from "../project-editor/project-editor.component";
 import { MdEditorOption } from "ngx-markdown-editor";
 import { AuthService } from "@auth0/auth0-angular";
-import {Observable} from "rxjs";
+import {map, Observable, of, tap} from "rxjs";
+import {Store} from '@ngrx/store';
+import {selectFocusedProjects, selectProjects} from "../../state/projects/projects.selector";
+import {selectTags} from "../../state/tags/tags.selector";
+import {mergeMap} from "rxjs/operators";
+import {selectApiWritePrivilege} from "../../state/auth/auth.selector";
 
 export interface ProjectPanel {
   project: Project,
   opened: boolean
 }
 
-export interface TagOption {
-  tag: Tag,
-  selected: boolean
-}
-
 export interface ProjectDialogData {
-  project: Project,
-  tags: Tag[],
+  project: Readonly<Project>,
+  tags: ReadonlyArray<Tag>,
   action: string
 }
 
@@ -35,11 +36,15 @@ export interface ProjectDialogData {
 })
 
 export class ProjectsPageComponent implements OnInit {
-  projectPanels: ProjectPanel[] = [];
-  filteredProjectPanels: ProjectPanel[] = [];
-  tagOptions: TagOption[] = [];
-  //@ts-ignore
-  isAdmin: Observable<boolean>;
+  tags$: Observable<readonly Tag[]> = this.store.select(selectTags);
+
+  //Pipe the projects and tags through the interface we need for out Frontend
+  projectPanels$: Observable<ProjectPanel[]> = this.store.select(selectFocusedProjects).pipe(
+    mergeMap( (projects) => this.getProjectPanelsData(projects))
+  )
+
+  isAdmin$ = this.store.select(selectApiWritePrivilege);
+
   //Makes the HTML happy
   defaultProjectCopy: Project = defaultProject;
 
@@ -55,93 +60,28 @@ export class ProjectsPageComponent implements OnInit {
 
   constructor(
     private projectService: ProjectsService,
+    private tagsService: TagsService,
     private dialog: MatDialog,
-    public auth: AuthService
+    public auth: AuthService,
+    private store: Store
   ) {
-    this.getWritePrivileges()
+    this.store.dispatch({type: '[Auth API] Check Write Privilege'})
   }
 
   ngOnInit(): void {
-    this.getProjects()
+    this.store.dispatch({ type: '[Projects API] Load Projects' });
+    this.store.dispatch({ type: '[Tags API] Load Tags' });
   }
 
-  getWritePrivileges(): void {
-    this.isAdmin = this.projectService.getWritePrivileges()
-  }
-
-  getProjects(): void {
-    console.log("Fetching projects:")
-    this.projectService.getProjectsAndTags()
-      .subscribe((data) => {
-        // Error Check
-        if (data.length > 0) {
-          //Extract Project Panels
-          this.projectPanels = _.map(data[0], (p): ProjectPanel => {
-            return {
-              project: p,
-              opened: false
-            }
-          })
-          this.filteredProjectPanels = this.projectPanels;
-          //Extract Tags available
-          this.tagOptions = _.map(data[1], (t): TagOption => {
-            return {
-              tag: t,
-              selected: false
-            }
-          })
-          // console.log("Extracted ProjectPanels: ", this.projectPanels);
-          // console.log("Extracted Tags: ", this.tagOptions);
-        }
-        else {
-          this.projectPanels = [
-            {
-              project: defaultProject,
-              opened: false
-            }];
-          this.filteredProjectPanels = this.projectPanels;
+  getProjectPanelsData = (projects: readonly Project[]): Observable<ProjectPanel[]> => {
+    return of(
+      _.map(projects, (p): ProjectPanel => {
+        return {
+          project: p,
+          opened: false
         }
       })
-  }
-
-  //Helper functions for extracting data from tag selection interface
-
-  //Get Tags from a list of tag options
-  getTags(tagOptions?: TagOption[]): Tag[] {
-    if(tagOptions !== undefined) {
-      return _.map(tagOptions, (t) => t.tag);
-    }
-    else {
-      return _.map(this.tagOptions, (t) => t.tag);
-    }
-  }
-
-  //Get ids from a list of tags
-  getTagIds(tags: Tag[]): string[] {
-    return _.map(tags, (t) => t.id);
-  }
-
-  //Get the IDs of all selected tags
-  getSelectedTagIds(): string[] {
-    let selectedTagOptions = _.filter(this.tagOptions, (t) => t.selected);
-    return this.getTagIds(this.getTags(selectedTagOptions));
-  }
-
-  //Updates filtered projects
-  projectFilter(): void {
-    let selectedTags: string[] = this.getSelectedTagIds();
-    if (selectedTags.length === 0) {
-      this.filteredProjectPanels = this.projectPanels;
-      return;
-    }
-    console.log("Tag selection change");
-    console.log("Selected Tags: ", selectedTags);
-    this.filteredProjectPanels = _.filter(this.projectPanels, (p) => {
-      console.log("Testing tags: ", p.project.tags);
-      let intersection = _.intersection(p.project.tags, selectedTags);
-      console.log("Intersection: ", intersection)
-      return intersection.length > 0;
-    })
+    )
   }
 
   //Opens the dialog panel for creating a new project
@@ -170,71 +110,44 @@ export class ProjectsPageComponent implements OnInit {
   }
 
   getTagColor(tagId: string) {
-    //Error Check
-    if (this.tagOptions !== []) {
-      let tags = this.getTags(this.tagOptions);
-      let tag = _.findWhere(tags, {id: tagId});
-      if (tag) {
-        return "rgb(" + tag.color + ")";
-      }
-      console.log("[ERROR] Tag does not exist: id = ", tagId)
+    let tag = _.findWhere(this.getTags(), {id: tagId});
+    if (tag) {
+      return "rgb(" + tag.color + ")";
     }
-    console.log("[ERROR] No tags to get colors from!");
+    // console.log("[ERROR] Tag does not exist: id = ", tagId)
     return "rgb(0, 0, 0)"
   }
 
   //@todo: Make this work with out ToolTips!
   getTagName(tagId: string) {
-    //Error Check
-    if (this.tagOptions !== []) {
-      let tags = this.getTags(this.tagOptions)
-      let tag = _.findWhere(tags, {id: tagId});
-      if (tag) {
-        return tag.name;
-      }
-      console.log("[ERROR] Tag does not exist: id = ", tagId)
+    let tag = _.findWhere(this.getTags(), {id: tagId});
+    if (tag) {
+      return tag.name;
     }
-    console.log("[ERROR] No tags to get names from!");
-    return "No Name"
+    // console.log("[ERROR] Tag does not exist: id = ", tagId)
+    return 'No Name'
   }
 
+
   private addProject(data: Project) {
-    console.log("Added project: ", data)
-    this.projectService.addProject(data)
-      .subscribe((data) => {
-        console.log("Project added successfully!");
-        this.projectPanels.push({
-          project: data,
-          opened: false
-        })
-        this.filteredProjectPanels = this.projectPanels;
-      })
+    this.store.dispatch({type: "[Projects API] Add Project", project: data})
   }
 
   private updateProject(data: Project) {
-    console.log("Updated project: ", data)
-    this.projectService.updateProject(data)
-      .subscribe((data) => {
-        console.log("Project added successfully!");
-        this.projectPanels = _.map(this.projectPanels, (p) => {
-          if (p.project.id === data.id) {
-            p.project = data;
-          }
-          return p;
-        })
-        this.filteredProjectPanels = this.projectPanels;
-      })
+    this.store.dispatch({type: "[Projects API] Update Project", project: data})
   }
 
-  private deleteProject(id: string) {
-    console.log("Deleted project: ", id)
-    this.projectService.deleteProject(id)
-      .subscribe(() => {
-        console.log("Project added successfully!");
-        this.projectPanels = _.filter(this.projectPanels, (p) => {
-          return p.project.id !== id
-        })
-        this.filteredProjectPanels = this.projectPanels;
-      })
+  private deleteProject(data: string) {
+    this.store.dispatch({type: "[Projects API] Delete Project", id: data})
+  }
+
+  updateTags(id: string) {
+    this.store.dispatch({type: "[Projects Page] Update Selected Tags", tag_id: id })
+  }
+
+  getTags() {
+    let tags: ReadonlyArray<Tag> = [];
+    this.tags$.subscribe(ts => tags = ts)
+    return tags
   }
 }

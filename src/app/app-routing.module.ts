@@ -13,7 +13,7 @@ const routes: Routes = [
   { path: '', component: FrontPageComponent },
   { path: 'about', component: AboutPageComponent },
   { path: 'projects', component: ProjectsPageComponent },
-  { path: 'photos', component: PhotosPageComponent },
+  // { path: 'photos', component: PhotosPageComponent },
   { path: 'login', component: LoginPageComponent },
   // Wild card route
   { path: '**', component: ErrorPageComponent }

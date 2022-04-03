@@ -1,5 +1,4 @@
 <div class="container" *ngIf="auth.isLoading$ | async; else loaded">
-<!--  <img src="../assets/placeholdericon.ico">-->
   <mat-spinner></mat-spinner>
 </div>
 
@@ -14,7 +13,7 @@
     <mat-menu #menu="matMenu">
       <button mat-menu-item (click)="buttonNavigate('/')">Home</button>
       <button mat-menu-item (click)="buttonNavigate('/projects')">Projects</button>
-      <button mat-menu-item (click)="buttonNavigate('/photos')">Photo Gallery (Coming Soon)</button>
+<!--      <button mat-menu-item (click)="buttonNavigate('/photos')">Photo Gallery (Coming Soon)</button>-->
       <button mat-menu-item (click)="buttonNavigate('/about')">About</button>
     </mat-menu>
     <a routerLink="/" routerLinkActive="active" style="text-decoration: none;color: black">

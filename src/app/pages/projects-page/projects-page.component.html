@@ -4,15 +4,14 @@
     <ul class="tree-view">
       <li>Show:
           <ul>
-            <li *ngFor="let t of tagOptions">
+            <li *ngFor="let t of tags$ | async">
               <input
                 type="checkbox"
-                id="{{t.tag.id}}"
-                [(ngModel)]="t.selected"
-                (change)="projectFilter()">
-              <label for="{{t.tag.id}}">
-                {{t.tag.name}}
-                <mat-icon [ngStyle]="{'color': getTagColor(t.tag.id)}">
+                id="{{t.id}}"
+                (change)="updateTags(t.id)">
+              <label for="{{t.id}}">
+                {{t.name}}
+                <mat-icon [ngStyle]="{'color': getTagColor(t.id)}">
                   circle
                 </mat-icon>
               </label>
@@ -28,8 +27,8 @@
     <mat-toolbar class="toolbar">
       <span>projects.</span>
       <span class="spacer"></span>
-      <button mat-button class='toolbar-button' *ngIf="isAdmin | async"
-              aria-label="Add proejct"
+      <button mat-button class='toolbar-button' *ngIf="isAdmin$ | async"
+              aria-label="Add project"
               (click)="openProjectEditor({project: defaultProjectCopy, tags: getTags(), action: 'Add'})">
         <mat-icon>add</mat-icon>
       </button>
@@ -37,7 +36,7 @@
     <hr>
     <p>Take a look at what I've been up to</p>
     <mat-accordion>
-      <mat-expansion-panel *ngFor="let p of filteredProjectPanels"
+      <mat-expansion-panel *ngFor="let p of projectPanels$ | async"
                            hideToggle
                            (opened)="p.opened = true"
                            (closed)="p.opened = false">
@@ -63,7 +62,7 @@
                    [options]="options"
                    [(ngModel)]="p.project.description">
         </md-editor>
-        <div class="change-content-buttons" *ngIf="isAdmin | async">
+        <div class="change-content-buttons" *ngIf="isAdmin$ | async">
           <button (click)="openProjectEditor({project: p.project, tags: getTags(), action: 'Edit'})">
             Edit
           </button>

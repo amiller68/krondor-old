@@ -70,38 +70,44 @@ if(process.env.NODE_ENV === 'production') {
 //Try putting this last
 app.use(express.static(dir));
 
+// Data GET Methods:
+
 app.get('/api/projects',(req, res) => {
   console.log("Projects requested.")
   fs.readFile(dbFile, 'utf-8',(err, data) => {
     if (err) throw err;
-    let dataObj = JSON.parse(data);
-    res.json(
-      {
-        "projects": dataObj.projects,
-        "tags": dataObj.tags
-      });
+    res.json(JSON.parse(data).projects);
   });
 });
 
-app.get('/api/projects/write_privileges', jwtCheck, projectWriteCheck, (err, req, res, next) => {
-  //Middle ware for returning responses to unauthorized clients
-  if(err) {
-    console.log("Write status denied")
+
+app.get('/api/tags',(req, res) => {
+  console.log("Tags requested.")
+  fs.readFile(dbFile, 'utf-8',(err, data) => {
+    if (err) throw err;
+    res.json(JSON.parse(data).tags);
+  });
+});
+
+app.get('/api/auth/write_privileges', jwtCheck, projectWriteCheck, (err, req, res, next) => {
+    //Middle ware for returning responses to unauthorized clients
+    if(err) {
+      console.log("Write status denied")
+      res.json(
+        {
+          "privileges": false
+        }
+      );
+    } else {
+      next();
+    }
+  }, (req, res) => {
+    console.log("Write status approved")
     res.json(
       {
-        "privileges": false
+        "privileges": true
       }
-    );
-  } else {
-    next();
-  }
-}, (req, res) => {
-  console.log("Write status approved")
-  res.json(
-    {
-      "privileges": true
-    }
-  )
+    )
 });
 
 app.post('/api/projects', tokenLog, jwtCheck, projectWriteCheck, authError, (req, res) => {
@@ -144,7 +150,7 @@ app.delete('/api/projects/:id', tokenLog, jwtCheck, projectWriteCheck, (req, res
 
     fs.writeFile(dbFile, updatedDataStr, (err) => {
       if (err) throw err;
-      res.send();
+      res.send()
     });
   });
 });

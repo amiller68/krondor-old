@@ -16,7 +16,7 @@ export class ProjectEditorComponent implements OnInit {
   //Action coordinates what we're doing to the project being edited
   action: string = '';
   localProject: Project = defaultProject;
-  localTags: Tag[] = [];
+  localTags: ReadonlyArray<Tag> = [];
 
   //Editor variables
   title: string = '';
@@ -63,15 +63,11 @@ export class ProjectEditorComponent implements OnInit {
 
   getTagColor(tagId: string) {
     //Error Check
-    if (this.localTags !== undefined) {
-      let tags = this.localTags
-      let tag = _.findWhere(tags, {id: tagId});
-      if (tag) {
-        return "rgb(" + tag.color + ")";
-      }
-      console.log("[ERROR] Tag does not exist: id = ", tagId)
+    let tags = this.localTags
+    let tag = _.findWhere(tags, {id: tagId});
+    if (tag) {
+      return "rgb(" + tag.color + ")";
     }
-    console.log("[ERROR] No tags to get colors from!");
     return "rgb(0, 0, 0)"
   }
 

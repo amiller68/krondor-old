@@ -41,7 +41,16 @@ import {LoginPageComponent} from './pages/login-page/login-page.component';
 //Auth module
 import {AuthHttpInterceptor, AuthModule} from "@auth0/auth0-angular";
 
-import {environment as env} from '../environments/environment'
+import {environment as env} from '../environments/environment';
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from "@ngrx/effects";
+
+import {projectsApiReducer, projectsPageReducer} from "./state/projects/projects.reducer"
+import {tagsReducer} from "./state/tags/tags.reducer";
+import {ProjectEffects} from "./state/projects/projects.effects";
+import {TagsEffects} from "./state/tags/tags.effects";
+import {authReducer} from "./state/auth/auth.reducer";
+import {AuthEffects} from "./state/auth/auth.effects";
 
 @NgModule({
   declarations: [
@@ -90,6 +99,17 @@ import {environment as env} from '../environments/environment'
         ]
       },
     }),
+
+    StoreModule.forRoot(
+      {
+        projectsPage: projectsPageReducer,
+        projectsApi: projectsApiReducer,
+        tags: tagsReducer,
+        authState: authReducer
+      },
+      {}
+    ),
+    EffectsModule.forRoot([ProjectEffects, TagsEffects, AuthEffects])
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,

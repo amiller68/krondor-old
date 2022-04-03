@@ -1,5 +1,3 @@
-import * as moment from 'moment';
-
 export type Project = {
   id: string,
   startDate: Date,
@@ -30,4 +28,8 @@ export const defaultTag: Tag = {
   id: 'tag_id',
   name: 'defaultTag',
   color: '0,0,0'
+}
+
+export interface ProjectSelection {
+  tag_ids: string[]
 }
