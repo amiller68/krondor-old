@@ -20,7 +20,19 @@
       <span>krondor.</span>
     </a>
     <span class="spacer"></span>
-    <app-auth-button></app-auth-button>
+    <ng-container *ngIf="auth.isAuthenticated$ | async; else loggedOut">
+      <button mat-icon-button class='toolbar-button' (click)="logout()"
+              matTooltip="Logout">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </ng-container>
+
+    <ng-template #loggedOut>
+      <button mat-icon-button class='toolbar-button' (click)="login()"
+              matTooltip="Login">
+        <mat-icon>login</mat-icon>
+      </button>
+    </ng-template>
     &nbsp;
     <button mat-icon-button class='toolbar-button'
             aria-label="About this site"

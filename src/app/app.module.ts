@@ -7,7 +7,7 @@ import {CommonModule} from "@angular/common";
 
 //App Modules
 import {AppRoutingModule} from './app-routing.module';
-import {AppComponent, AuthButtonComponent} from './app.component';
+import {AppComponent} from './app.component';
 
 //Angular Materials
 import {MatToolbarModule} from '@angular/material/toolbar';
@@ -61,8 +61,7 @@ import {AuthEffects} from "./state/auth/auth.effects";
     AboutPageComponent,
     ProjectEditorComponent,
     ErrorPageComponent,
-    LoginPageComponent,
-    AuthButtonComponent
+    LoginPageComponent
   ],
   imports: [
     BrowserModule,

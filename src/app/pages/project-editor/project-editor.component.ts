@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, Optional } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { MdEditorOption, UploadResult } from "ngx-markdown-editor";
 import { MatDialogRef, MAT_DIALOG_DATA  } from "@angular/material/dialog";
 import {defaultProject, Project, Tag} from "../../entities/projects";
@@ -34,7 +34,7 @@ export class ProjectEditorComponent implements OnInit {
     public dialogRef: MatDialogRef<ProjectEditorComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ProjectDialogData) {
     console.log("Dialog opened with Initializer: ", data);
-    this.localProject = data.project;
+    this.localProject = Object.assign({}, data.project);
     this.localTags = data.tags
     this.action = data.action;
 
