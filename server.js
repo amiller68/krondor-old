@@ -189,8 +189,6 @@ app.post('/api/projects', tokenLog, jwtCheck, projectWriteCheck, authError, (req
   }
   //@todo: Reconfigre these names, jeez
   mongoQuery(client, 'projects', 'Projects', req.method, newProject, (result) => {
-    console.log("Project Added: ", result.insertedId);
-    newProject._id = result.insertedId;
     res.json({
       data: newProject
     })

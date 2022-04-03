@@ -63,6 +63,7 @@ export class ProjectsService {
     //Before we submit a new project, need to format it properly
     let data: any = {...project};
     data._id = uuid.v4();
+    // console.log("New project:", data._id);
     data.startDate = moment(project.startDate).format('MMDDYYYY');
     if (project.endDate !== undefined) {
       data.endDate = moment(project.endDate).format('MMDDYYYY');
