@@ -111,27 +111,30 @@ if(process.env.NODE_ENV === 'production') {
     if (req.header('X-Forwarded-Proto') !== 'https') {
       console.log("Redirecting to HTTPS...");
       res.redirect(`https://${req.header('host')}${req.url}`);
-    }
-    else
+    } else
       next();
   })
   console.log("Using forced SSL...")
-  mongo_uri = process.env.MONGO_URI;
-  client = new MongoClient(mongo_uri);
+}
+
+// Initialize our MongoDB client
+
+// Handle the case in which this is deployed on AWS from a local copy of this repository
+//In this case we don't have to use secret env files.
+if (process.env.MONGO_URI) {
+  mongo_uri = process.env.MONGO_URI
 } else {
   fs.readFile(mongoUriFile, 'utf-8', (err, data) => {
-    mongo_uri = data;
-    console.log("Using URI: ", mongo_uri);
-    client = new MongoClient(mongo_uri);
-
     if (err) {
-      console.log("hmm")
+      console.log("MongUri Does not exist.")
       throw err;
     }
+    mongo_uri = data;
   });
 }
-console.log("Set Mongo URI: ", mongo_uri);
 
+console.log("Using URI: ", mongo_uri);
+client = new MongoClient(mongo_uri);
 
 //Try putting this last
 app.use(express.static(dir));
