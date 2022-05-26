@@ -15,6 +15,28 @@ const mongoUriFile = 'mongodb.uri'
 //URI string used to access Mongo DB
 var mongo_uri = 'No URI Loaded';
 
+// Handle the case in which this is deployed on AWS from a local copy of this repository
+//In this case we don't have to use secret env files.
+if (process.env.MONGO_URI) {
+  console.log("huh")
+  mongo_uri = process.env.MONGO_URI
+  // Initialize our MongoDB client
+  console.log("Using URI: ", mongo_uri);
+  client = new MongoClient(mongo_uri);
+} else {
+  console.log("heh")
+  fs.readFile(mongoUriFile, 'utf-8', (err, data) => {
+    if (err) {
+      console.log("MongUri Does not exist.")
+      throw err;
+    }
+    mongo_uri = data;
+    // Initialize our MongoDB client
+    console.log("Using URI: ", mongo_uri);
+    client = new MongoClient(mongo_uri);
+  });
+}
+
 async function mongoQuery(client, db, collection, method, data=undefined, callback) {
   console.log("Making Query to: <", db, ">:<", collection, ">:<",method,">:",data);
   let result = undefined;
@@ -116,25 +138,6 @@ if(process.env.NODE_ENV === 'production') {
   })
   console.log("Using forced SSL...")
 }
-
-// Initialize our MongoDB client
-
-// Handle the case in which this is deployed on AWS from a local copy of this repository
-//In this case we don't have to use secret env files.
-if (process.env.MONGO_URI) {
-  mongo_uri = process.env.MONGO_URI
-} else {
-  fs.readFile(mongoUriFile, 'utf-8', (err, data) => {
-    if (err) {
-      console.log("MongUri Does not exist.")
-      throw err;
-    }
-    mongo_uri = data;
-  });
-}
-
-console.log("Using URI: ", mongo_uri);
-client = new MongoClient(mongo_uri);
 
 //Try putting this last
 app.use(express.static(dir));

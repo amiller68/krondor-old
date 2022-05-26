@@ -17,9 +17,10 @@ ng build
 mkdir $SOURCE_BUNDLE_NAME
 
 # Copy any app dependencies to our bundle
-
+mkdir ${SOURCE_BUNDLE_NAME}/dist
+mkdir ${SOURCE_BUNDLE_NAME}/dist/krondor/
 # Copy our front-end distributables
-cp -r ./dist/* ${SOURCE_BUNDLE_NAME}/dist/
+cp -r ./dist/krondor/* ${SOURCE_BUNDLE_NAME}/dist/krondor/
 
 # Copy our server
 cp server.js ${SOURCE_BUNDLE_NAME}/
