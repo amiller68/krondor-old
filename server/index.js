@@ -1,5 +1,4 @@
 console.log("Node Version: ", process.version);
-require('dotenv').config({ path: `.env.${process.env.NODE_ENV}` })
 
 /* Imports */
 const express = require("express");
