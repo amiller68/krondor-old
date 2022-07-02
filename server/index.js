@@ -1,5 +1,5 @@
 console.log("Node Version: ", process.version);
-
+console.log("Node Environment: ", process.env.NODE_ENV);
 /* Imports */
 const express = require("express");
 const bodyParser = require('body-parser');
@@ -20,20 +20,12 @@ app.use(express.static(dir));
 app.use(httpsRedirect);
 
 /* Declare our routes */
-app.use('/api', apiRoutes);
+app.use('api', apiRoutes);
 
 /* Wildcard route for serving the Angular app */
-app.get('*', (req, res) => {
+app.get('/*', (req, res) => {
+  console.log("huh");
   res.sendFile(path.join(dir, 'index.html'));
 });
 
-// Listen on all interfaces
-app.listen(process.env.PORT || 3000, () => {
-  console.log("Server listening", process.env.PORT || 3000,"!")
-  if (process.env.NODE_ENV === 'production') {
-    console.log("Server running in production mode.");
-  }
-  else {
-    console.log("Server running in development mode.")
-  }
-});
+module.exports = app;

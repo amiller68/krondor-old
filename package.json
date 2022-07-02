@@ -6,11 +6,13 @@
   },
   "scripts": {
     "ng": "ng",
-    "start": "NODE_ENV=production node server/index.js",
+    "start": "NODE_ENV=production node server/server.js",
     "build": "ng build --prod",
     "watch": "ng build --watch --configuration development",
-    "development": "NODE_ENV=development node server/index.js",
-    "production": "NODE_ENV=production node server/index.js"
+    "development": "NODE_ENV=development node server/server.js",
+    "production": "NODE_ENV=production node server/server.js",
+    "dev_test": "NODE_ENV=development jasmine",
+    "test": "NODE_ENV=production jasmine"
   },
   "private": true,
   "dependencies": {
@@ -47,6 +49,7 @@
     "ngx-markdown-editor": "^4.0.0",
     "node-sass": "^7.0.1",
     "rxjs": "~7.4.0",
+    "supertest": "^6.2.4",
     "tslib": "^2.3.0",
     "underscore": "^1.13.2",
     "uuid": "^8.3.2",
@@ -60,6 +63,7 @@
     "@types/node": "^12.11.1",
     "@types/underscore": "^1.11.4",
     "@types/uuid": "^8.3.4",
+    "jasmine": "^4.2.1",
     "jasmine-core": "~3.10.0",
     "karma": "~6.3.0",
     "karma-chrome-launcher": "~3.1.0",
