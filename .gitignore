@@ -49,6 +49,7 @@ Thumbs.db
 db.json
 
 mongo.uri
+.env
 *.zip
 
 #amplify-do-not-edit-begin
