@@ -37,49 +37,6 @@ if (process.env.MONGO_URI) {
   });
 }
 
-async function mongoQuery(client, db, collection, method, data=undefined, callback) {
-  console.log("Making Query to: <", db, ">:<", collection, ">:<",method,">:",data);
-  let result = undefined;
-  try {
-    await client.connect();
-
-    //Get project
-    if(method === 'GET') {
-      console.log("Retrieving Data");
-      //Send the results to an array
-      result = await client.db(db).collection(collection).find().toArray()
-    }
-
-    //Check if there's data to send before calling these
-    else if (data) {
-      //Add a project
-      if (method === 'POST') {
-        console.log("Posting Data");
-        result = client.db(db).collection(collection).insertOne(data)
-      }
-      //Update a project
-      else if (method === 'PUT') {
-        console.log("Updating Data");
-        result = client.db(db).collection(collection).updateOne({_id: data._id},{$set: data})
-      }
-      //Update a delete
-      else if (method === 'DELETE') {
-        console.log("Deleting Data");
-        result = client.db(db).collection(collection).deleteOne({_id: data._id});
-      }
-    }
-
-    else {
-      console.log("[ERROR] Could not route DB request");
-    }
-  } catch (err) {
-    console.error(err)
-  } finally {
-    await client.close
-  }
-  // console.log("Result: ", result)
-  callback(result);
-}
 
 const app = express();
 
