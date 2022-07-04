@@ -1,7 +1,7 @@
 console.log("Node Version: ", process.version);
 console.log("Node Environment: ", process.env.NODE_ENV);
 /* Imports */
-const express = require("express");
+const express = require('express');
 const bodyParser = require('body-parser');
 const { httpsRedirect } = require('./middleware/https');
 const path = require('path');
@@ -19,11 +19,12 @@ app.use(bodyParser.json());
 app.use(express.static(dir));
 app.use(httpsRedirect);
 
-/* Declare our routes */
-app.use('api', apiRoutes);
+// /* Declare our routes */
+// app.use('/api', apiRoutes);
+//
 
 /* Wildcard route for serving the Angular app */
-app.get('/*', (req, res) => {
+app.get('/', (req, res) => {
   console.log("huh");
   res.sendFile(path.join(dir, 'index.html'));
 });
