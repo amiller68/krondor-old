@@ -1,17 +1,17 @@
 const request = require("supertest");
-const app = require("../server/index");
+const app = require("../server/server");
 
 // Test our App
 describe("App", () => {
   console.log("Testing App");
 
   // Test our static pages
-  // describe("Angular pages", () => {
-  //   console.log("Testing Angular pages");
-  //   it("should return a 200 response", (done) => {
-  //     request(app).get("/").expect(200, done);
-  //   }, 5000);
-  // });
+  describe("Angular pages", () => {
+    console.log("Testing Angular pages");
+    it("should return a 200 response", (done) => {
+      request(app).get("/").expect(200, done);
+    }, 5000);
+  });
 
   // Test our API
   describe("API", () => {

@@ -11,7 +11,7 @@ const mongoClient = new MongoClient(process.env.MONGO_URI);
  * @param method: The method specified in the request
  * @param data: The data to send to the database (is only used for POST and PUT)
  * @param client: The client used to connect to the database (mongoClient by default)
- * @returns {Promise<void>}
+ * @return {Object}: The result of the query
  */
 const query = async (
   db,
@@ -21,6 +21,7 @@ const query = async (
   client = mongoClient
 ) => {
   // Form our query and return the promise to the caller
+
   return new Promise(async (resolve, reject) => {
     client
       .connect()
@@ -71,7 +72,7 @@ const query = async (
         reject(err);
       })
       .finally(() => {
-        client.close();
+        // client.close();
       });
   });
 };
