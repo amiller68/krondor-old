@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, isDevMode, OnInit} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ProjectsService } from "../../api/services/projects/projects.service";
 import { TagsService } from "../../api/services/tags/tags.service";
@@ -13,7 +13,6 @@ import {Store} from '@ngrx/store';
 import {selectFocusedProjects, selectProjectsLoaded} from "../../state/projects/projects.selector";
 import {selectTags} from "../../state/tags/tags.selector";
 import {mergeMap} from "rxjs/operators";
-import {selectApiWritePrivilege} from "../../state/auth/auth.selector";
 
 export interface ProjectPanel {
   project: Project,
@@ -54,7 +53,8 @@ export class ProjectsPageComponent implements OnInit {
 
   focusedPanel: ProjectPanel | undefined = undefined;
 
-  isAdmin$ = this.store.select(selectApiWritePrivilege);
+  // If NODE_ENV is set to 'development', then allowed to edit
+  isAdmin = isDevMode();
 
   //Makes the HTML happy
   defaultProjectCopy: Project = defaultProject;
@@ -73,7 +73,6 @@ export class ProjectsPageComponent implements OnInit {
     private projectService: ProjectsService,
     private tagsService: TagsService,
     private dialog: MatDialog,
-    public auth: AuthService,
     private store: Store
   ) {
     this.store.dispatch({type: '[Auth API] Check Write Privilege'})
@@ -82,8 +81,6 @@ export class ProjectsPageComponent implements OnInit {
   ngOnInit(): void {
     this.store.dispatch({ type: '[Projects API] Load Projects' });
     this.store.dispatch({ type: '[Tags API] Load Tags' });
-
-    this.store.dispatch({type: '[Auth API] Check Write Privilege'});
   }
 
   //Opens the dialog panel for creating a new project

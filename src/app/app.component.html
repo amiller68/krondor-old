@@ -1,9 +1,10 @@
-<div class="container" *ngIf="auth.isLoading$ | async; else loaded">
+<!--TODO: Get this working-->
+<div class="container" *ngIf="false; else loaded">
   <mat-spinner></mat-spinner>
 </div>
 
   <ng-template #loaded>
-  <mat-toolbar class="app-toolbar">
+  <mat-toolbar class="index-toolbar">
     <button mat-button [matMenuTriggerFor]="menu" class="menu-button">
       <mat-icon>
         menu
@@ -20,19 +21,6 @@
       <span>krondor.</span>
     </a>
     <span class="spacer"></span>
-    <ng-container *ngIf="auth.isAuthenticated$ | async; else loggedOut">
-      <button mat-icon-button class='toolbar-button' (click)="logout()"
-              matTooltip="Logout">
-        <mat-icon>logout</mat-icon>
-      </button>
-    </ng-container>
-
-    <ng-template #loggedOut>
-      <button mat-icon-button class='toolbar-button' (click)="login()"
-              matTooltip="Login">
-        <mat-icon>login</mat-icon>
-      </button>
-    </ng-template>
     &nbsp;
     <button mat-icon-button class='toolbar-button'
             aria-label="About this site"

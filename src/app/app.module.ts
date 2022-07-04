@@ -38,9 +38,6 @@ import {ProjectEditorComponent} from './pages/project-editor/project-editor.comp
 import {ErrorPageComponent} from "./pages/error-page/error-page.component";
 import {LoginPageComponent} from './pages/login-page/login-page.component';
 
-//Auth module
-import {AuthHttpInterceptor, AuthModule} from "@auth0/auth0-angular";
-
 import {environment as env} from '../environments/environment';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from "@ngrx/effects";
@@ -49,8 +46,6 @@ import {projectsApiReducer, projectsPageReducer} from "./state/projects/projects
 import {tagsReducer} from "./state/tags/tags.reducer";
 import {ProjectEffects} from "./state/projects/projects.effects";
 import {TagsEffects} from "./state/tags/tags.effects";
-import {authReducer} from "./state/auth/auth.reducer";
-import {AuthEffects} from "./state/auth/auth.effects";
 
 @NgModule({
   declarations: [
@@ -86,35 +81,17 @@ import {AuthEffects} from "./state/auth/auth.effects";
     LMarkdownEditorModule,
     MatTableModule,
 
-    AuthModule.forRoot({
-      ...env.auth,
-      scope: 'write:projects',
-      httpInterceptor: {
-        allowedList: [
-          {
-            uri: env.apiEndpoint + '*',
-            allowAnonymous: true
-          }
-        ]
-      },
-    }),
-
     StoreModule.forRoot(
       {
         projectsPage: projectsPageReducer,
         projectsApi: projectsApiReducer,
         tags: tagsReducer,
-        authState: authReducer
       },
       {}
     ),
-    EffectsModule.forRoot([ProjectEffects, TagsEffects, AuthEffects])
+    EffectsModule.forRoot([ProjectEffects, TagsEffects])
   ],
-  providers: [{
-    provide: HTTP_INTERCEPTORS,
-    useClass: AuthHttpInterceptor,
-    multi: true
-  }],
+  providers: [],
   bootstrap: [AppComponent]
 })
 //@ts-ignore
